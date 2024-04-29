@@ -12,7 +12,7 @@ namespace ProyectoFinal_ivinader
         private Sprite icono;
         private int turno;
         private bool activo;
-        private List<IEsPista> listaPistas;
+        private List<Pista> listaPistas;
         private List<Objeto> listaObjetos;
 
         public Jugador(string nombre, string color)
@@ -21,10 +21,10 @@ namespace ProyectoFinal_ivinader
             icono = new Sprite(color);
             turno = 1;
             activo = false;
-            listaPistas = new List<IEsPista>();
+            listaPistas = new List<Pista>();
             listaObjetos = new List<Objeto>();
         }
-        public void AddPista(IEsPista p)
+        public void AddPista(Pista p)
         {
             listaPistas.Add(p);
         }
@@ -36,7 +36,7 @@ namespace ProyectoFinal_ivinader
         public string Nombre { get => nombre; set => nombre = value; }
         public int Turno { get => turno; set => turno = value; }
         public bool Activo { get => activo; set => activo = value; }
-        public List<IEsPista> ListaPistas { get => listaPistas; set => listaPistas = value; }
+        public List<Pista> ListaPistas { get => listaPistas; set => listaPistas = value; }
         public List<Objeto> ListaObjetos { get => listaObjetos; set => listaObjetos = value; }
         public Sprite Icono { get => icono; set => icono = value; }
 

@@ -11,8 +11,12 @@ namespace ProyectoFinal_ivinader
     {
         private List<IEsEvento> eventos;
         public DadoEvento()
-        {
+        { 
             eventos = new List<IEsEvento>();
+        }
+        public DadoEvento(List<IEsEvento> eventos)
+        {
+        this.eventos = eventos;
         }
         public override short Lanzar()
         {

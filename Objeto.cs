@@ -10,6 +10,21 @@ namespace ProyectoFinal_ivinader
     {
         private string nombre;
         private string descripcion;
-        public Objeto(int num)
+        public Objeto(string nombre, string descripcion)
+        {
+            this.nombre = nombre;
+            this.descripcion = descripcion;
+        }
+        public string Nombre { get => nombre; set => nombre = value; }
+        public string Descripcion { get => descripcion; set => descripcion = value; }
+        public override bool Equals(object? obj)
+        {
+            return obj is Objeto objeto &&
+                   nombre == objeto.nombre;
+        }
+        public override string ToString()
+        {
+            return $"{nombre}\n {descripcion}";
+        }
     }
 }

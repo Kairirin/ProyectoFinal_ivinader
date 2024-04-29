@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal abstract class Dado
+    internal class Arma : Pista
     {
-        protected Random r;
-        public Dado()
+        public Arma(string nombre) : base(nombre) { }
+        public override string ToString()
         {
-            r = new Random();
+            return "Arma: " + base.ToString();
         }
-        public abstract short Lanzar();
     }
 }
