@@ -63,9 +63,13 @@ namespace ProyectoFinal_ivinader
         {
             //Selección de personaje
             //Cargar fichero jugadores asociado a ficheros binarios de imágenes
-
+            Jugador j1 = new Jugador("Irene", "Pink");
             //Crear Lista con Personaje
-            LanzarJuego(); //Pasar personaje como parámetro.
+            List<Jugador> jugadores = new List<Jugador>();
+            jugadores.Add(j1);
+            //LanzarJuego(); //Pasar personaje como parámetro.
+            Juego cluedo = new Juego(jugadores);
+            cluedo.JugarTurno(j1);
         }
         public static void ModoMultijugador()
         {
@@ -78,7 +82,7 @@ namespace ProyectoFinal_ivinader
             //Cargar fichero jugadores asociado a ficheros binarios de imágenes
 
             //Crear Lista con Personaje
-            LanzarJuego(); //Pasar personaje como parámetro.
+            //LanzarJuego(); //Pasar personaje como parámetro.
         }
         public static void MostrarInstrucciones()
         {

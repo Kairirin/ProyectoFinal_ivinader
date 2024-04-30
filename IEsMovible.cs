@@ -8,6 +8,6 @@ namespace ProyectoFinal_ivinader
 {
     internal interface IEsMovible
     {
-        void Mover(int x, int y);
+        void Mover(Tablero t);
     }
 }

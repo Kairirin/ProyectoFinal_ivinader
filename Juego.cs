@@ -25,7 +25,7 @@ namespace ProyectoFinal_ivinader
             CargarPistas();
             eventos = new List<IEsEvento>();
             CargarEventos();
-            solucionCaso = CargarSolucion();
+            //solucionCaso = CargarSolucion();
 
             if (jugadores.Count > 1)
             {
@@ -36,9 +36,10 @@ namespace ProyectoFinal_ivinader
             else
             {
                 dados = new Dado[1];
-                dados[1] = new DadoEvento();
+                dados[0] = new DadoEvento();
             }
         }
+
         private void CargarPistas()
         {
             //Leer conjunto total de pistas de archivo de persistencia de objetos
@@ -47,10 +48,10 @@ namespace ProyectoFinal_ivinader
         {
             //Leer conjunto total de eventos de archivo de persistencia de objetos
         }
-        private Solucion CargarSolucion()
+        /*private Solucion CargarSolucion()
         {
             //Sacar uno de cada tipo de la lista de pistas, borrarlo y devolver Solucion construida
-        }
+        }*/
         public List<Jugador> GetJugadores()
         {
             return jugadores;
@@ -70,6 +71,26 @@ namespace ProyectoFinal_ivinader
         public void JugarTurno(Jugador j)
         {
             //Implementar juego por turnos
+            int xAnterior, yAnterior;
+
+            while(true)
+            {
+                Console.Clear();
+                tablero.MostrarTablero();
+
+                xAnterior = j.Icono.X;
+                yAnterior = j.Icono.Y;
+
+                while (!Console.KeyAvailable)
+                {
+                    j.Icono.Mover(tablero);
+                    j.Icono.DibujarIcono();
+                    Console.WriteLine('O');
+                }
+
+                Console.SetCursorPosition(xAnterior, yAnterior);
+                Console.WriteLine(' ');
+            }
         }
         public void DarObjeto(Jugador j)
         {
