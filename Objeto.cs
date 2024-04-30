@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Objeto: IEsEvento
+    [Serializable]
+    public class Objeto: IEsEvento
     {
         private string nombre;
         private string descripcion;
+        public Objeto() { }
         public Objeto(string nombre, string descripcion)
         {
             this.nombre = nombre;

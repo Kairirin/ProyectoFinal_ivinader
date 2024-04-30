@@ -26,35 +26,37 @@ namespace ProyectoFinal_ivinader
         {
             Console.CursorVisible = false;
 
-            if (!Console.KeyAvailable)
-            {
-                ConsoleKeyInfo tecla = Console.ReadKey();
+            ConsoleKeyInfo tecla = Console.ReadKey();
 
-                if (tecla.Key == ConsoleKey.UpArrow && y > 1)
-                {
-                    if(t.ComprobarEspacio(x, y--))
-                        y--;
-                }
-                if (tecla.Key == ConsoleKey.DownArrow && y < t.Alto)
-                {
-                    if (t.ComprobarEspacio(x, y++))
-                        y++;
-                }
-                if (tecla.Key == ConsoleKey.RightArrow && x < t.Ancho)
-                {
-                    if (t.ComprobarEspacio(x++, y))
-                        x++;
-                }
-                if (tecla.Key == ConsoleKey.LeftArrow && x > 0)
-                {
-                    if (t.ComprobarEspacio(x--, y))
-                        x--;
-                }
-                Console.SetCursorPosition(x, y);
+            if (tecla.Key == ConsoleKey.UpArrow && y > 1)
+            {
+                if (t.ComprobarEspacio(x, y-1))
+                    y--;
             }
-            
+            if (tecla.Key == ConsoleKey.DownArrow && y < t.Alto)
+            {
+                if (t.ComprobarEspacio(x, y+1))
+                    y++;
+            }
+            if (tecla.Key == ConsoleKey.RightArrow && x < t.Ancho)
+            {
+                if (t.ComprobarEspacio(x+1, y))
+                    x++;
+            }
+            if (tecla.Key == ConsoleKey.LeftArrow && x > 0)
+            {
+                if (t.ComprobarEspacio(x-1, y))
+                    x--;
+            }
+            Console.SetCursorPosition(x, y);
         }
-        public void DibujarIcono()
+        public void Dibujar()
+        {
+            AplicarColor();
+            Console.SetCursorPosition(x, y);
+            Console.Write('O');
+        }
+        public void AplicarColor()
         {
             switch(color)
             {
@@ -74,7 +76,7 @@ namespace ProyectoFinal_ivinader
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
             }
-            
+
         }
     }
 }

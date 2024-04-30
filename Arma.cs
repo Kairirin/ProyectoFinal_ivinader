@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Arma : Pista
+    [Serializable]
+    public class Arma : Pista
     {
+        public Arma() { }
         public Arma(string nombre) : base(nombre) { }
         public override string ToString()
         {

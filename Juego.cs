@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace ProyectoFinal_ivinader
 {
@@ -21,11 +25,9 @@ namespace ProyectoFinal_ivinader
             this.jugadores = jugadores;
             tablero = new Tablero();
             r = new Random();
-            pistas = new List<Pista>();
-            CargarPistas();
-            eventos = new List<IEsEvento>();
-            CargarEventos();
-            //solucionCaso = CargarSolucion();
+            pistas = CargarPistas();
+            eventos = CargarEventos();
+            solucionCaso = CargarSolucion();
 
             if (jugadores.Count > 1)
             {
@@ -39,19 +41,50 @@ namespace ProyectoFinal_ivinader
                 dados[0] = new DadoEvento();
             }
         }
+        private List<Pista> CargarPistas()
+        {
+            List<Pista> pistas = new List<Pista>();
+            XmlSerializer formatter = new XmlSerializer(pistas.GetType());
+            FileStream stream = new FileStream("pistas.xml", FileMode.Open, FileAccess.Read, FileShare.Read);
+            pistas = (List<Pista>)formatter.Deserialize(stream);
 
-        private void CargarPistas()
-        {
-            //Leer conjunto total de pistas de archivo de persistencia de objetos
+            stream.Close();
+
+            return pistas;
         }
-        private void CargarEventos()
+        private List<IEsEvento> CargarEventos()
         {
-            //Leer conjunto total de eventos de archivo de persistencia de objetos
+            eventos = new List<IEsEvento>();
+
+            string fichero = "habitaciones.json";
+            string jsonString = File.ReadAllText(fichero);
+            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);
+
+            eventos.Add(new Objeto("Aspirina", "Evita perder un turno"));
+            eventos.Add(new Objeto("Ganzúa", "Abre una puerta cerrada"));
+            eventos.Add(new Objeto("Trofeo", "Obtienes una pista extra al llegar a una ubicación"));
+            eventos.AddRange(habs);
+            pistas.AddRange(habs);
+
+            return eventos;
         }
-        /*private Solucion CargarSolucion()
+
+        private Solucion CargarSolucion()
         {
-            //Sacar uno de cada tipo de la lista de pistas, borrarlo y devolver Solucion construida
-        }*/
+            List<Pista> listaSospechososAuxiliar = pistas.FindAll(s => s is Sospechoso);
+            List<Pista> listaArmasAuxiliar = pistas.FindAll(s => s is Arma);
+            List<IEsEvento> listaHabsAuxiliar = eventos.FindAll(s => s is Habitacion);
+
+            Sospechoso culpable = (Sospechoso)listaSospechososAuxiliar[r.Next(0, listaSospechososAuxiliar.Count() - 1)];
+            Arma arma = (Arma)listaArmasAuxiliar[r.Next(0, listaArmasAuxiliar.Count() - 1)];
+            Habitacion escenaCrimen = (Habitacion)listaHabsAuxiliar[r.Next(0, listaHabsAuxiliar.Count() - 1)];
+
+            pistas.Remove(culpable);
+            pistas.Remove(arma);
+            pistas.Remove(escenaCrimen);
+
+            return new Solucion(culpable, arma, escenaCrimen);
+        }
         public List<Jugador> GetJugadores()
         {
             return jugadores;
@@ -71,25 +104,16 @@ namespace ProyectoFinal_ivinader
         public void JugarTurno(Jugador j)
         {
             //Implementar juego por turnos
-            int xAnterior, yAnterior;
+            //Lanzar dados
 
             while(true)
             {
                 Console.Clear();
                 tablero.MostrarTablero();
+                j.Icono.Dibujar();
+                j.Icono.Mover(tablero);
 
-                xAnterior = j.Icono.X;
-                yAnterior = j.Icono.Y;
 
-                while (!Console.KeyAvailable)
-                {
-                    j.Icono.Mover(tablero);
-                    j.Icono.DibujarIcono();
-                    Console.WriteLine('O');
-                }
-
-                Console.SetCursorPosition(xAnterior, yAnterior);
-                Console.WriteLine(' ');
             }
         }
         public void DarObjeto(Jugador j)
@@ -121,6 +145,25 @@ namespace ProyectoFinal_ivinader
         public void Resolver(Solucion sol)
         {
             //Implementar
+        }
+        private void CargarHabitacionesEnFichero()
+        {
+            //Método empleado para crear el .json que cargará las habitaciones. No ha vuelto a ser utilizado
+            List<Habitacion> habs = new List<Habitacion>();
+            habs.Add(new Habitacion("Cocina", 'K'));
+            habs.Add(new Habitacion("Comedor", 'C'));
+            habs.Add(new Habitacion("Sala de estar", 'S'));
+            habs.Add(new Habitacion("Habitación de invitados", 'I'));
+            habs.Add(new Habitacion("Habitación principal", 'H'));
+            habs.Add(new Habitacion("Baño", 'B'));
+            habs.Add(new Habitacion("Estudio", 'E'));
+            habs.Add(new Habitacion("Puesto de policía", 'R'));
+
+            string fichero = "habitaciones.json";
+
+            JsonSerializerOptions opciones = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve, WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(habs, opciones);
+            File.WriteAllText(fichero, jsonString);
         }
     }
 }

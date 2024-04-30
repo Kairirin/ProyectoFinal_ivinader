@@ -63,13 +63,20 @@ namespace ProyectoFinal_ivinader
         {
             //Selección de personaje
             //Cargar fichero jugadores asociado a ficheros binarios de imágenes
-            Jugador j1 = new Jugador("Irene", "Pink");
+
+            Jugador j1 = new Jugador("Irene", "Pink"); //Prueba de movilidad sobre tablero, aún sin personaje
+
             //Crear Lista con Personaje
             List<Jugador> jugadores = new List<Jugador>();
             jugadores.Add(j1);
+
             //LanzarJuego(); //Pasar personaje como parámetro.
-            Juego cluedo = new Juego(jugadores);
-            cluedo.JugarTurno(j1);
+            Juego cluedo = new Juego(jugadores); 
+            cluedo.GetPistas().ForEach(p => Console.WriteLine(p)); //Borrar. Prueba para comprobar deserialización xml
+            Thread.Sleep(800);//Borrar. Prueba
+            Console.WriteLine(cluedo.GetSolucion()); //Borrar. Prueba
+            Thread.Sleep(10000);//Borrar. Prueba
+            cluedo.JugarTurno(j1); //Prueba de juego, sin implementar método
         }
         public static void ModoMultijugador()
         {
@@ -92,7 +99,7 @@ namespace ProyectoFinal_ivinader
         static void Main(string[] args)
         {
             InicializarConsola();
-            MostrarMenu();
+            MostrarMenu();//Seguramente terminaré creando una clase "Menú" donde irá todo esto
             
         }
     }

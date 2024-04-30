@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Sospechoso: Pista
+    [Serializable]
+    public class Sospechoso: Pista
     {
+        public Sospechoso() { }
         public Sospechoso(string nombre) : base(nombre) { }
         public override string ToString()
         {

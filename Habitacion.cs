@@ -6,22 +6,21 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Habitacion: Pista, IEsEvento
+    [Serializable]
+    public class Habitacion: Pista, IEsEvento
     {
-        private int x;
-        private int y;
+        private char letra;
         private List<Puerta> puertas;
-        public Habitacion(string nombre, int x, int y): base(nombre)
+        public Habitacion() { }
+        public Habitacion(string nombre, char letra): base(nombre)
         {
-            this.x = x;
-            this.y = y;
+            this.letra = letra;
             puertas = new List<Puerta>();
             puertas.Add(new Puerta(this, false));
             puertas.Add(new Puerta(this, true));
         }
-        public int X { get => x; set => x = value; }
-        public int Y { get => y; set => y = value; }
         public List<Puerta> Puertas { get => puertas; set => puertas = value; }
+        public char Letra { get => letra; set => letra = value; }
         public override string ToString()
         {
             return "Habitación: " + base.ToString();

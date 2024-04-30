@@ -8,18 +8,18 @@ namespace ProyectoFinal_ivinader
 {
     internal class Solucion
     {
-        private Sospechoso sospechoso;
+        private Sospechoso culpable;
         private Arma arma;
         private Habitacion habitacion;
-        public Solucion(Sospechoso sospechoso, Arma arma, Habitacion habitacion)
+        public Solucion(Sospechoso culpable, Arma arma, Habitacion habitacion)
         {
-            this.sospechoso = sospechoso;
+            this.culpable = culpable;
             this.arma = arma;
             this.habitacion = habitacion;
         }
-        public Sospechoso GetSospechoso()
+        public Sospechoso GetCulpable()
         {
-            return sospechoso;
+            return culpable;
         }
         public Arma GetArma()
         {
@@ -33,9 +33,13 @@ namespace ProyectoFinal_ivinader
         public override bool Equals(object? obj)
         {
             return obj is Solucion solucion &&
-                   EqualityComparer<Sospechoso>.Default.Equals(sospechoso, solucion.sospechoso) &&
+                   EqualityComparer<Sospechoso>.Default.Equals(culpable, solucion.culpable) &&
                    EqualityComparer<Arma>.Default.Equals(arma, solucion.arma) &&
                    EqualityComparer<Habitacion>.Default.Equals(habitacion, solucion.habitacion);
+        }
+        public override string ToString()
+        {
+            return $"{culpable} - {arma} - {habitacion}";
         }
     }
 }

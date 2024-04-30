@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Puerta
+    [Serializable]
+    public class Puerta
     {
         private Habitacion estancia;
         private bool bloqueada;
+        public Puerta() { }
         public Puerta(Habitacion estancia, bool bloqueada)
         {
             this.estancia = estancia;

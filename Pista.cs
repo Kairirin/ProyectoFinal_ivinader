@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Pista
+    [XmlInclude(typeof(Sospechoso))]
+    [XmlInclude(typeof(Arma))]
+    [XmlInclude(typeof(Habitacion))]
+    [Serializable]
+    public class Pista
     {
         protected string nombre;
+        public Pista() { }
         public Pista(string nombre)
         {
             this.nombre = nombre;

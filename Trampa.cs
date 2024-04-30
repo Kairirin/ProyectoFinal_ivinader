@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
 {
-    internal class Trampa: IEsEvento
+    [Serializable]
+    public class Trampa: IEsEvento
     {
         private string nombre;
         private string descripcion;
         private Habitacion estancia;
         private bool activa;
+        public Trampa() { }
         public Trampa(string nombre, string descripcion, Habitacion estancia, bool activa)
         {
             this.nombre = nombre;
