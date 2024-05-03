@@ -104,7 +104,7 @@ namespace ProyectoFinal_ivinader
         public void JugarTurno(Jugador j)
         {
             //Implementar juego por turnos
-            //Lanzar dados
+            //Lanzar dados 
 
             while(true)
             {
@@ -112,7 +112,26 @@ namespace ProyectoFinal_ivinader
                 tablero.MostrarTablero();
                 j.Icono.Dibujar();
                 j.Icono.Mover(tablero);
+                
+                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " ") //¿Cambiar por expresión regular?
+                {
+                    DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
 
+                    Console.SetCursorPosition(0, tablero.Alto + 1);//Fragmento de código provisional para comprobar si se dan las pistas. Funciona!!!!!!
+                    Console.ResetColor();
+                    Console.WriteLine("Lista de pistas del jugador: ");
+
+                    if (j.ListaPistas.Count > 0)
+                    {
+                        j.ListaPistas.ForEach(p => Console.WriteLine(p));
+                    }
+                    else
+                    {
+                        Console.WriteLine("No hay pistas");
+                    }
+                    Console.WriteLine("Enter para continuar: ");
+                    Console.ReadLine(); //Fin del fragmento de código de prueba
+                }
 
             }
         }
@@ -122,18 +141,34 @@ namespace ProyectoFinal_ivinader
 
             j.ListaObjetos.Add((Objeto)objetos[r.Next(1, objetos.Count)]);
         }
-        public void DarPista(Jugador j)
+        public void DarPista(Jugador j, string hab)
         {
             bool salir = false;
+            int contador = 0;
 
             while (!salir)
             {
-                Pista pistaProvisional = pistas[r.Next(1, pistas.Count)];
+                List<Pista> pistaProvisional = pistas.FindAll(p => p.LetraAsociada == hab); //pistas[r.Next(1, pistas.Count)]; En un principio existía la posibilidad de dar las pistas aleatoriamente, pero me ha parecido interesante dar las que estén asociadas a la habitación donde está el jugador, de esta manera tiene que recorrerer todo el mapa.
 
-                if (!j.ListaPistas.Contains(pistaProvisional))
+                if (pistaProvisional.Count == 0)
                 {
-                    j.ListaPistas.Add(pistaProvisional);
                     salir = true;
+                }
+                else if (j.ListaPistas.Count == 0 || !j.ListaPistas.Contains(pistaProvisional[contador]))
+                {
+                    j.ListaPistas.Add(pistaProvisional[contador]);
+                    salir = true;
+                }
+                else
+                {
+                    if(contador != pistaProvisional.Count -1)
+                    {
+                        contador++;
+                    }
+                    else
+                    {
+                        salir = true;
+                    }
                 }
             }
         }
@@ -150,14 +185,14 @@ namespace ProyectoFinal_ivinader
         {
             //Método empleado para crear el .json que cargará las habitaciones. No ha vuelto a ser utilizado
             List<Habitacion> habs = new List<Habitacion>();
-            habs.Add(new Habitacion("Cocina", 'K'));
-            habs.Add(new Habitacion("Comedor", 'C'));
-            habs.Add(new Habitacion("Sala de estar", 'S'));
-            habs.Add(new Habitacion("Habitación de invitados", 'I'));
-            habs.Add(new Habitacion("Habitación principal", 'H'));
-            habs.Add(new Habitacion("Baño", 'B'));
-            habs.Add(new Habitacion("Estudio", 'E'));
-            habs.Add(new Habitacion("Puesto de policía", 'R'));
+            habs.Add(new Habitacion("Cocina", "K"));
+            habs.Add(new Habitacion("Comedor", "C"));
+            habs.Add(new Habitacion("Sala de estar", "S"));
+            habs.Add(new Habitacion("Habitación de invitados", "I"));
+            habs.Add(new Habitacion("Habitación principal", "H"));
+            habs.Add(new Habitacion("Baño", "B"));
+            habs.Add(new Habitacion("Estudio", "E"));
+            habs.Add(new Habitacion("Puesto de policía", "R"));
 
             string fichero = "habitaciones.json";
 

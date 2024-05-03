@@ -30,22 +30,22 @@ namespace ProyectoFinal_ivinader
 
             if (tecla.Key == ConsoleKey.UpArrow && y > 1)
             {
-                if (t.ComprobarEspacio(x, y-1))
+                if (t.ComprobarEspacio(x, y-1) != "1" && t.ComprobarEspacio(x,y-1) != "P")
                     y--;
             }
             if (tecla.Key == ConsoleKey.DownArrow && y < t.Alto)
             {
-                if (t.ComprobarEspacio(x, y+1))
+                if (t.ComprobarEspacio(x, y + 1) != "1" && t.ComprobarEspacio(x, y + 1) != "P")
                     y++;
             }
             if (tecla.Key == ConsoleKey.RightArrow && x < t.Ancho)
             {
-                if (t.ComprobarEspacio(x+1, y))
+                if (t.ComprobarEspacio(x+1, y) != "1" && t.ComprobarEspacio(x+1, y) != "P")
                     x++;
             }
             if (tecla.Key == ConsoleKey.LeftArrow && x > 0)
             {
-                if (t.ComprobarEspacio(x-1, y))
+                if (t.ComprobarEspacio(x-1, y) != "1" && t.ComprobarEspacio(x - 1, y) != "P")
                     x--;
             }
             Console.SetCursorPosition(x, y);
@@ -76,7 +76,7 @@ namespace ProyectoFinal_ivinader
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
             }
-
         }
+        
     }
 }

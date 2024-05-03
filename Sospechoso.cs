@@ -10,7 +10,8 @@ namespace ProyectoFinal_ivinader
     public class Sospechoso: Pista
     {
         public Sospechoso() { }
-        public Sospechoso(string nombre) : base(nombre) { }
+        public Sospechoso(string nombre, string letra) : base(nombre, letra) { }
+
         public override string ToString()
         {
             return "Sospechoso: " + base.ToString();

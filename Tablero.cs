@@ -43,9 +43,9 @@ namespace ProyectoFinal_ivinader
         }
         public int Ancho { get => ancho; set => ancho = value; }
         public int Alto { get => alto; set => alto = value; }
-        public bool ComprobarEspacio(int x, int y)
+        public string ComprobarEspacio(int x, int y)
         {
-            return tablero[y][x] != '1' && tablero[y][x] != 'P'; //Comprobar y programar bien
+            return tablero[y][x].ToString();
         }
     }
 }

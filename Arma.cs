@@ -10,7 +10,7 @@ namespace ProyectoFinal_ivinader
     public class Arma : Pista
     {
         public Arma() { }
-        public Arma(string nombre) : base(nombre) { }
+        public Arma(string nombre, string letra) : base(nombre, letra) { }
         public override string ToString()
         {
             return "Arma: " + base.ToString();

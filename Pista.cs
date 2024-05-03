@@ -14,12 +14,15 @@ namespace ProyectoFinal_ivinader
     public class Pista
     {
         protected string nombre;
+        protected string letraAsociada;
         public Pista() { }
-        public Pista(string nombre)
+        public Pista(string nombre, string letraAsociada)
         {
             this.nombre = nombre;
+            this.letraAsociada = letraAsociada;
         }
         public string Nombre { get => nombre; set => nombre = value; }
+        public string LetraAsociada { get => letraAsociada; set => letraAsociada = value; }
 
         public override bool Equals(object? obj)
         {
@@ -28,7 +31,7 @@ namespace ProyectoFinal_ivinader
         }
         public override string ToString()
         {
-            return nombre;
+            return $"{letraAsociada} - {nombre}";
         }
     }
 }

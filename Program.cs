@@ -75,7 +75,7 @@ namespace ProyectoFinal_ivinader
             cluedo.GetPistas().ForEach(p => Console.WriteLine(p)); //Borrar. Prueba para comprobar deserialización xml
             Thread.Sleep(800);//Borrar. Prueba
             Console.WriteLine(cluedo.GetSolucion()); //Borrar. Prueba
-            Thread.Sleep(10000);//Borrar. Prueba
+            Thread.Sleep(1000);//Borrar. Prueba
             cluedo.JugarTurno(j1); //Prueba de juego, sin implementar método
         }
         public static void ModoMultijugador()
