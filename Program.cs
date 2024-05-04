@@ -76,7 +76,10 @@ namespace ProyectoFinal_ivinader
             Thread.Sleep(800);//Borrar. Prueba
             Console.WriteLine(cluedo.GetSolucion()); //Borrar. Prueba
             Thread.Sleep(1000);//Borrar. Prueba
+            cluedo.GetEventos().ForEach(e => Console.WriteLine(e));
+            Thread.Sleep(1000);
             cluedo.JugarTurno(j1); //Prueba de juego, sin implementar método
+
         }
         public static void ModoMultijugador()
         {

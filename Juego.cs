@@ -25,6 +25,7 @@ namespace ProyectoFinal_ivinader
             this.jugadores = jugadores;
             tablero = new Tablero();
             r = new Random();
+            //CargarHabitacionesEnFichero();
             pistas = CargarPistas();
             eventos = CargarEventos();
             solucionCaso = CargarSolucion();
@@ -56,9 +57,18 @@ namespace ProyectoFinal_ivinader
         {
             eventos = new List<IEsEvento>();
 
-            string fichero = "habitaciones.json";
+            /*string fichero = "habitaciones.json";
             string jsonString = File.ReadAllText(fichero);
-            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);
+            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);*/
+
+            List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
+            habs.Add(new Habitacion("Cocina", "K"));
+            habs.Add(new Habitacion("Comedor", "C"));
+            habs.Add(new Habitacion("Sala de estar", "S"));
+            habs.Add(new Habitacion("Habitación de invitados", "I"));
+            habs.Add(new Habitacion("Habitación principal", "H"));
+            habs.Add(new Habitacion("Baño", "B"));
+            habs.Add(new Habitacion("Estudio", "E"));
 
             eventos.Add(new Objeto("Aspirina", "Evita perder un turno"));
             eventos.Add(new Objeto("Ganzúa", "Abre una puerta cerrada"));
@@ -110,10 +120,11 @@ namespace ProyectoFinal_ivinader
             {
                 Console.Clear();
                 tablero.MostrarTablero();
+                OcurreEvento(j); //MOdificar luego todo esto para que no sea una locura
                 j.Icono.Dibujar();
                 j.Icono.Mover(tablero);
                 
-                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " ") //¿Cambiar por expresión regular?
+                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R") //¿Cambiar por expresión regular?
                 {
                     DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
 
@@ -129,10 +140,35 @@ namespace ProyectoFinal_ivinader
                     {
                         Console.WriteLine("No hay pistas");
                     }
+                    Console.WriteLine("Lista de objetos del jugador: ");
+
+                    if (j.ListaObjetos.Count > 0)
+                    {
+                        j.ListaObjetos.ForEach(p => Console.WriteLine(p));
+                    }
+                    else
+                    {
+                        Console.WriteLine("No hay objetos");
+                    }
                     Console.WriteLine("Enter para continuar: ");
                     Console.ReadLine(); //Fin del fragmento de código de prueba
                 }
 
+            }
+        }
+        public void OcurreEvento(Jugador j)
+        {
+            IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];// eventos[eventos.Count - 2];Comprobación de puertas
+
+            switch (eventoElegido.GetType().Name)
+            {
+                case "Objeto":
+                    DarObjeto(j);
+                    break;
+                case "Habitacion":
+                    string letra = ((Habitacion)eventoElegido).LetraAsociada;
+                    BloquearPuertas(letra);
+                    break;
             }
         }
         public void DarObjeto(Jugador j)
@@ -146,10 +182,10 @@ namespace ProyectoFinal_ivinader
             bool salir = false;
             int contador = 0;
 
+            List<Pista> pistaProvisional = pistas.FindAll(p => p.LetraAsociada == hab); //pistas[r.Next(1, pistas.Count)]; En un principio existía la posibilidad de dar las pistas aleatoriamente, pero me ha parecido interesante dar las que estén asociadas a la habitación donde está el jugador, de esta manera tiene que recorrerer todo el mapa.
+
             while (!salir)
             {
-                List<Pista> pistaProvisional = pistas.FindAll(p => p.LetraAsociada == hab); //pistas[r.Next(1, pistas.Count)]; En un principio existía la posibilidad de dar las pistas aleatoriamente, pero me ha parecido interesante dar las que estén asociadas a la habitación donde está el jugador, de esta manera tiene que recorrerer todo el mapa.
-
                 if (pistaProvisional.Count == 0)
                 {
                     salir = true;
@@ -173,9 +209,16 @@ namespace ProyectoFinal_ivinader
             }
         }
         //Método PonerTrampa por implementar
-        public void BloquearPuertas(Habitacion hab)
+        public void BloquearPuertas(string letra)
         {
-            hab.Puertas.ForEach(p => p.BloquearDesbloquear());
+            eventos.ForEach(h =>
+            {
+                if(h is Habitacion && ((Habitacion)h).LetraAsociada == letra)
+                {
+                    ((Habitacion)h).Puertas.ForEach(p => p.BloquearDesbloquear(letra));
+                    tablero.GestionPuertas(letra);
+                }
+            });
         }
         public void Resolver(Solucion sol)
         {

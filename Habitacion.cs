@@ -11,6 +11,7 @@ namespace ProyectoFinal_ivinader
     {
         private List<Puerta> puertas;
         public Habitacion() { }
+        public Habitacion(string nombre) : base(nombre) { }
         public Habitacion(string nombre, string letra): base(nombre, letra)
         {
             puertas = new List<Puerta>();

@@ -19,7 +19,7 @@ namespace ProyectoFinal_ivinader
         }
         public bool Bloqueada { get => bloqueada; set => bloqueada = value; }
         public Habitacion Estancia { get => estancia; set => estancia = value; }
-        public void BloquearDesbloquear()
+        public void BloquearDesbloquear(string letra)
         {
             if(bloqueada)
             {
