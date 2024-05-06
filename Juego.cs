@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -114,56 +115,67 @@ namespace ProyectoFinal_ivinader
         public void JugarTurno(Jugador j)
         {
             //Implementar juego por turnos
-            //Lanzar dados 
+            //Lanzar dados en multijugador
+            int contadorPasos = 0;
+            bool resuelto = false;
 
-            while(true)
+            while(!resuelto)
             {
                 Console.Clear();
                 tablero.MostrarTablero();
-                OcurreEvento(j); //MOdificar luego todo esto para que no sea una locura
+
+                j.MostrarObjetos(0, tablero.Alto + 3);
+                j.MostrarPistas(Console.WindowWidth/2, tablero.Alto + 3);
+
+                if (contadorPasos % 8 == 0) 
+                    OcurreEvento(j);
+
                 j.Icono.Dibujar();
-                j.Icono.Mover(tablero);
+                j.Icono.Mover(tablero, j);
+                contadorPasos++;
                 
-                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R") //¿Cambiar por expresión regular?
+                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R") 
                 {
                     DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                    if(j.ListaObjetos.Contains(new Objeto("Trofeo","")))
+                    {
+                        DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                        j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
+                    }
+                }
+                else
+                {
+                    if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) == "R")
+                    {
+                        Console.SetCursorPosition(0, ((tablero.Alto + 3) + (j.ListaObjetos.Count + 3)));
+                        Console.WriteLine("¿Quieres resolver? (Si/No)");
+                        string respuesta = Console.ReadLine();
 
-                    Console.SetCursorPosition(0, tablero.Alto + 1);//Fragmento de código provisional para comprobar si se dan las pistas. Funciona!!!!!!
-                    Console.ResetColor();
-                    Console.WriteLine("Lista de pistas del jugador: ");
-
-                    if (j.ListaPistas.Count > 0)
-                    {
-                        j.ListaPistas.ForEach(p => Console.WriteLine(p));
+                        if (respuesta.ToUpper() == "SI")
+                        {
+                            if (Resolver())
+                            {
+                                Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                                resuelto = true;
+                            }
+                            else
+                                Console.WriteLine("Sigue intentándolo");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("No hay pistas");
-                    }
-                    Console.WriteLine("Lista de objetos del jugador: ");
-
-                    if (j.ListaObjetos.Count > 0)
-                    {
-                        j.ListaObjetos.ForEach(p => Console.WriteLine(p));
-                    }
-                    else
-                    {
-                        Console.WriteLine("No hay objetos");
-                    }
-                    Console.WriteLine("Enter para continuar: ");
-                    Console.ReadLine(); //Fin del fragmento de código de prueba
                 }
 
             }
         }
         public void OcurreEvento(Jugador j)
         {
-            IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];// eventos[eventos.Count - 2];Comprobación de puertas
+            IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];
 
             switch (eventoElegido.GetType().Name)
             {
                 case "Objeto":
-                    DarObjeto(j);
+                    int probabilidad = r.Next(1, 50);
+                    if(probabilidad % 2 == 0)
+                        DarObjeto(j);
                     break;
                 case "Habitacion":
                     string letra = ((Habitacion)eventoElegido).LetraAsociada;
@@ -220,9 +232,105 @@ namespace ProyectoFinal_ivinader
                 }
             });
         }
-        public void Resolver(Solucion sol)
+        public bool Resolver()
         {
-            //Implementar
+            List<Pista> sol = CargarPistas();
+            List<Pista> aux = new List<Pista>();
+            int indice = 1;
+            bool salir = false;
+            Sospechoso propuestaCulpable = null;
+            Arma propuestaArma = null;
+            Habitacion propuestaEstancia = null;
+            Console.SetCursorPosition(0, indice);
+            Console.CursorVisible = false;
+
+            while (!salir)
+            {
+                Console.Clear();
+                Console.WriteLine("Elige sospechoso: ");
+                aux = sol.Where(s => s is Sospechoso).ToList();
+                Mostrar(aux, indice);
+                ConsoleKeyInfo tecla = Console.ReadKey(true);
+                
+                if(!Console.KeyAvailable)
+                {
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                        indice--;
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                        indice++;
+                    if (tecla.Key == ConsoleKey.Enter)
+                    {
+                        propuestaCulpable = (Sospechoso)aux[indice];
+                        salir = true;
+                    }
+                }
+            }
+
+            salir = false;
+            indice = 1;
+            Console.SetCursorPosition(0, indice);
+
+            while (!salir)
+            {
+                Console.Clear();
+                Console.WriteLine("Elige arma: ");
+                aux = sol.Where(s => s is Arma).ToList();
+                Mostrar(aux, indice);
+                ConsoleKeyInfo tecla = Console.ReadKey(true);
+
+                if (!Console.KeyAvailable)
+                {
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                        indice--;
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                        indice++;
+                    if (tecla.Key == ConsoleKey.Enter)
+                    {
+                        propuestaArma = (Arma)aux[indice];
+                        salir = true;
+                    }
+                }
+            }
+
+            salir = false;
+            indice = 1;
+            Console.SetCursorPosition(0, indice);
+
+            while (!salir)
+            {
+                Console.Clear();
+                Console.WriteLine("Elige escena del crimen: ");
+                aux = sol.Where(s => s is Habitacion).ToList();
+                Mostrar(aux, indice);
+                ConsoleKeyInfo tecla = Console.ReadKey(true);
+
+                if (!Console.KeyAvailable)
+                {
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                        indice--;
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                        indice++;
+                    if (tecla.Key == ConsoleKey.Enter)
+                    {
+                        propuestaEstancia = (Habitacion)aux[indice];
+                        salir = true;
+                    }
+                }
+            }
+
+            return solucionCaso == new Solucion(propuestaCulpable, propuestaArma, propuestaEstancia);
+        }
+        private void Mostrar(List<Pista> lista, int indice)
+        {
+            for(int i = 0; i < lista.Count; i++)
+            {
+                if (indice == i)
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ResetColor();
+
+                Console.WriteLine(lista[i]);       
+            }
         }
         private void CargarHabitacionesEnFichero()
         {

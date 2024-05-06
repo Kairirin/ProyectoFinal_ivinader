@@ -22,7 +22,7 @@ namespace ProyectoFinal_ivinader
         public int Y { get => y; set => y = value; }
         public string Color { get => color; set => color = value; }
 
-        public void Mover(Tablero t)
+        public void Mover(Tablero t, Jugador j)
         {
             Console.CursorVisible = false;
 
@@ -30,23 +30,59 @@ namespace ProyectoFinal_ivinader
 
             if (tecla.Key == ConsoleKey.UpArrow && y > 1)
             {
-                if (t.ComprobarEspacio(x, y-1) != "1" && t.ComprobarEspacio(x,y-1) != "P")
+                if (t.ComprobarEspacio(x, y - 1) != "1" && t.ComprobarEspacio(x,y-1) != "P")
                     y--;
+                else
+                {
+                    if (t.ComprobarEspacio(x, y - 1) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    {
+                        y--;
+                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
+                        t.GestionPuertas(x, y);
+                    }
+                }
             }
             if (tecla.Key == ConsoleKey.DownArrow && y < t.Alto)
             {
                 if (t.ComprobarEspacio(x, y + 1) != "1" && t.ComprobarEspacio(x, y + 1) != "P")
                     y++;
+                else
+                {
+                    if (t.ComprobarEspacio(x, y + 1) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    {
+                        y++;
+                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
+                        t.GestionPuertas(x, y);
+                    }
+                }
             }
             if (tecla.Key == ConsoleKey.RightArrow && x < t.Ancho)
             {
                 if (t.ComprobarEspacio(x+1, y) != "1" && t.ComprobarEspacio(x+1, y) != "P")
                     x++;
+                else
+                {
+                    if (t.ComprobarEspacio(x + 1, y) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    {
+                        x++;
+                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
+                        t.GestionPuertas(x, y);
+                    }
+                }
             }
             if (tecla.Key == ConsoleKey.LeftArrow && x > 0)
             {
                 if (t.ComprobarEspacio(x-1, y) != "1" && t.ComprobarEspacio(x - 1, y) != "P")
                     x--;
+                else
+                {
+                    if (t.ComprobarEspacio(x - 1, y) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    {
+                        x--;
+                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
+                        t.GestionPuertas(x, y);
+                    }
+                }
             }
             Console.SetCursorPosition(x, y);
         }

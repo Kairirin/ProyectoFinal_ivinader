@@ -40,6 +40,39 @@ namespace ProyectoFinal_ivinader
         public List<Objeto> ListaObjetos { get => listaObjetos; set => listaObjetos = value; }
         public Sprite Icono { get => icono; set => icono = value; }
 
+        public void MostrarPistas(int x, int y)
+        {
+            Console.ResetColor();
+            Console.SetCursorPosition(x, y);
+            Console.WriteLine("Cuaderno de pistas: ");
+            if (listaPistas.Count > 0)
+            {
+                for(int i = 0; i < listaPistas.Count; i++)
+                {
+                    Console.SetCursorPosition(x, y + (i + 1));
+                    Console.WriteLine(listaPistas[i]);
+                }
+            }
+            else
+            {
+                Console.SetCursorPosition(x, y + 1);
+                Console.WriteLine("Sin pistas");
+            }
+        }
+        public void MostrarObjetos(int x, int y)
+        {
+            Console.ResetColor();
+            Console.SetCursorPosition(x, y);
+            Console.WriteLine($"Maletín de {nombre}: ");
+            if (listaObjetos.Count > 0)
+            {
+                listaObjetos.ForEach(p => Console.WriteLine(p));
+            }
+            else
+            {
+                Console.WriteLine("Sin objetos");
+            }
+        }
         public override string ToString()
         {
             return nombre; //Ampliar

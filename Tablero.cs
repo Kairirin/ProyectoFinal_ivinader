@@ -70,6 +70,15 @@ namespace ProyectoFinal_ivinader
                 }
             }
         }
+        public void GestionPuertas(int x, int y)
+        {
+            string aux1, aux2, resultado;
+
+            aux1 = tablero[y].Substring(0, x);
+            aux2 = tablero[y].Substring(x + 1);
+            resultado = aux1 + 'p' + aux2;
+            tablero[y] = resultado;
+        }
         public int Ancho { get => ancho; set => ancho = value; }
         public int Alto { get => alto; set => alto = value; }
         public string ComprobarEspacio(int x, int y)
