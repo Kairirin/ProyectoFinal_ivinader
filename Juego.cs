@@ -112,9 +112,9 @@ namespace ProyectoFinal_ivinader
         {
             return eventos;
         }
-        public void JugarTurno(Jugador j)
+        public void LanzarJuego(Jugador j)
         {
-            //Implementar juego por turnos
+            //Implementar juego por turnos en multi
             //Lanzar dados en multijugador
             int contadorPasos = 0;
             bool resuelto = false;
@@ -155,11 +155,18 @@ namespace ProyectoFinal_ivinader
                         {
                             if (Resolver())
                             {
+                                Console.Clear();
+                                Console.SetCursorPosition(Console.WindowWidth / 3, Console.WindowHeight / 2);
                                 Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                                Console.ReadLine();
                                 resuelto = true;
                             }
                             else
-                                Console.WriteLine("Sigue intentándolo");
+                            {
+                                Console.WriteLine("Sigue intentándolo" +
+                                        "\nPulsa cualquier tecla para continuar");
+                                Console.ReadLine();
+                            }  
                         }
                     }
                 }
@@ -232,21 +239,24 @@ namespace ProyectoFinal_ivinader
                 }
             });
         }
-        public bool Resolver()
+
+        public bool Resolver() //Tratar de refactorizar. Repite mucho código
         {
             List<Pista> sol = CargarPistas();
             List<Pista> aux = new List<Pista>();
-            int indice = 1;
+            int indice = 0;
             bool salir = false;
             Sospechoso propuestaCulpable = null;
             Arma propuestaArma = null;
             Habitacion propuestaEstancia = null;
+
             Console.SetCursorPosition(0, indice);
             Console.CursorVisible = false;
 
             while (!salir)
             {
                 Console.Clear();
+                Console.ResetColor();
                 Console.WriteLine("Elige sospechoso: ");
                 aux = sol.Where(s => s is Sospechoso).ToList();
                 Mostrar(aux, indice);
@@ -254,9 +264,9 @@ namespace ProyectoFinal_ivinader
                 
                 if(!Console.KeyAvailable)
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
                         indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {
@@ -267,12 +277,13 @@ namespace ProyectoFinal_ivinader
             }
 
             salir = false;
-            indice = 1;
+            indice = 0;
             Console.SetCursorPosition(0, indice);
 
             while (!salir)
             {
                 Console.Clear();
+                Console.ResetColor();
                 Console.WriteLine("Elige arma: ");
                 aux = sol.Where(s => s is Arma).ToList();
                 Mostrar(aux, indice);
@@ -280,9 +291,9 @@ namespace ProyectoFinal_ivinader
 
                 if (!Console.KeyAvailable)
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
                         indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {
@@ -293,22 +304,23 @@ namespace ProyectoFinal_ivinader
             }
 
             salir = false;
-            indice = 1;
+            indice = 0;
             Console.SetCursorPosition(0, indice);
 
             while (!salir)
             {
                 Console.Clear();
+                Console.ResetColor();
                 Console.WriteLine("Elige escena del crimen: ");
-                aux = sol.Where(s => s is Habitacion).ToList();
+                aux = pistas.Where(s => s is Habitacion).ToList();
                 Mostrar(aux, indice);
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
 
                 if (!Console.KeyAvailable)
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && indice > 1)
+                    if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
                         indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 7)
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {

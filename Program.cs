@@ -10,99 +10,11 @@ namespace ProyectoFinal_ivinader
             //Configurar pantalla completa o centrar - Windows forms
             //Cargar imagen de fondo
         }
-        public static void MostrarMenu()
-        {
-            bool salir = false;
-            int linea = 0;
-
-            while (!salir)
-            {
-                //Cargar botones en pantalla
-                Console.Clear();
-                Console.WriteLine("- Jugar solo" +
-                    "\n- Multijugador" +
-                    "\n- Instrucciones" +
-                    "\n- Salir");
-
-                Console.SetCursorPosition(0, linea);
-
-                if (!Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo tecla = Console.ReadKey();
-
-                    if(tecla.Key == ConsoleKey.UpArrow && linea > 0)
-                    {
-                        linea--;
-                    }
-                    if(tecla.Key == ConsoleKey.DownArrow && linea < 3)
-                    {
-                        linea++;
-                    }
-                    if(tecla.Key == ConsoleKey.Enter)
-                    {
-                        switch(linea)
-                        {
-                            case 0:
-                                ModoUnJugador();
-                                break;
-                            case 1:
-                                ModoMultijugador();
-                                break;
-                            case 2:
-                                MostrarInstrucciones();
-                                break;
-                            case 3:
-                                salir = true;
-                                break;
-                        }
-                    }      
-                }
-            }
-        }
-        public static void ModoUnJugador()
-        {
-            //Selección de personaje
-            //Cargar fichero jugadores asociado a ficheros binarios de imágenes
-
-            Jugador j1 = new Jugador("Irene", "Pink"); //Prueba de movilidad sobre tablero, aún sin personaje
-
-            //Crear Lista con Personaje
-            List<Jugador> jugadores = new List<Jugador>();
-            jugadores.Add(j1);
-
-            //LanzarJuego(); //Pasar personaje como parámetro.
-            Juego cluedo = new Juego(jugadores); 
-            cluedo.GetPistas().ForEach(p => Console.WriteLine(p)); //Borrar. Prueba para comprobar deserialización xml
-            Thread.Sleep(800);//Borrar. Prueba
-            Console.WriteLine(cluedo.GetSolucion()); //Borrar. Prueba
-            Thread.Sleep(1000);//Borrar. Prueba
-            cluedo.GetEventos().ForEach(e => Console.WriteLine(e));
-            Thread.Sleep(1000);
-            cluedo.JugarTurno(j1); //Prueba de juego, sin implementar método
-
-        }
-        public static void ModoMultijugador()
-        {
-            int numJugadores;
-
-            Console.Write("Número de jugadores: ");
-            numJugadores = Convert.ToInt32(Console.ReadLine()); // Botones de 2, 3 o 4.
-
-            //Selección de personajes
-            //Cargar fichero jugadores asociado a ficheros binarios de imágenes
-
-            //Crear Lista con Personaje
-            //LanzarJuego(); //Pasar personaje como parámetro.
-        }
-        public static void MostrarInstrucciones()
-        {
-            Console.Clear();
-           //Cargar imagen con instrucciones???
-        }
         static void Main(string[] args)
         {
             InicializarConsola();
-            MostrarMenu();//Seguramente terminaré creando una clase "Menú" donde irá todo esto
+            Menu menuJuego = new Menu();
+            menuJuego.MostrarMenu();
             
         }
     }
