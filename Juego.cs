@@ -29,7 +29,7 @@ namespace ProyectoFinal_ivinader
             r = new Random();
             //CargarHabitacionesEnFichero();
             pistas = CargarPistas();
-            CargarHabitaciones();
+            pistas.AddRange(CargarHabitaciones());
             //eventos = CargarEventos();
             solucionCaso = CargarSolucion();
             dadoE = new DadoEvento();
@@ -153,6 +153,7 @@ namespace ProyectoFinal_ivinader
             while(!resuelto)
             {
                 Console.Clear();
+                bool colision = false;
                 tablero.MostrarTablero();
 
                 j.MostrarObjetos(0, tablero.Alto + 3);
@@ -163,7 +164,7 @@ namespace ProyectoFinal_ivinader
                     //OcurreEvento(j);
 
                 j.Icono.Dibujar();
-                j.Icono.Mover(tablero, j);
+                j.Icono.Mover(tablero, jugadores, j, ref colision);
                 contadorPasos++;
                 
                 if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R") 
@@ -363,7 +364,7 @@ namespace ProyectoFinal_ivinader
                 Console.Clear();
                 Console.ResetColor();
                 Console.WriteLine("Elige escena del crimen: ");
-                aux = pistas.Where(s => s is Habitacion).ToList();
+                aux = CargarHabitaciones();
                 Mostrar(aux, indice);
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
 
@@ -395,9 +396,9 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine(lista[i]);       
             }
         }
-        private void CargarHabitaciones()
+        private List<Pista> CargarHabitaciones()
         {
-            List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
+            List<Pista> habs = new List<Pista>(); //Anotar en informe que no funciona la deserialización json
             habs.Add(new Habitacion("Cocina", "K"));
             habs.Add(new Habitacion("Comedor", "C"));
             habs.Add(new Habitacion("Sala de estar", "S"));
@@ -406,7 +407,7 @@ namespace ProyectoFinal_ivinader
             habs.Add(new Habitacion("Baño", "B"));
             habs.Add(new Habitacion("Estudio", "E"));
 
-            pistas.AddRange(habs);
+            return habs;
         }
         private void CargarHabitacionesEnFichero()
         {

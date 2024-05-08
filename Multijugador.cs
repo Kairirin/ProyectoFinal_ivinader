@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ProyectoFinal_ivinader
@@ -44,6 +45,7 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
             }*/
         }
+
         public bool JugarTurno(Jugador j)
         {
             //Implementar juego por turnos en multi
@@ -56,6 +58,7 @@ namespace ProyectoFinal_ivinader
             while (contadorPasos < pasos)
             {
                 Console.Clear();
+                bool colision = false;
                 tablero.MostrarTablero();
 
                 j.MostrarDatos(pasos);
@@ -71,8 +74,11 @@ namespace ProyectoFinal_ivinader
                 }
 
                 //j.Icono.Dibujar(); -> En el modo multijugador este método ha sido sustituido por el foreach que permite que todos los sprites salgan por pantalla todo el rato
-                j.Icono.Mover(tablero, j);
-                contadorPasos++;
+                j.Icono.Mover(tablero, jugadores, j, ref colision);
+                if(!colision)
+                    contadorPasos++;
+                else
+                    contadorPasos++;
 
                 if (tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R")
                 {
@@ -82,6 +88,7 @@ namespace ProyectoFinal_ivinader
                         DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
+                    contadorPasos = pasos;
                 }
                 else
                 {
@@ -95,6 +102,7 @@ namespace ProyectoFinal_ivinader
                         {
                             if (Resolver())
                             {
+                                contadorPasos = pasos;
                                 Console.Clear();
                                 Console.SetCursorPosition(Console.WindowWidth / 3, Console.WindowHeight / 2);
                                 Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
@@ -103,6 +111,7 @@ namespace ProyectoFinal_ivinader
                             }
                             else
                             {
+                                contadorPasos = pasos;
                                 Console.WriteLine("Sigue intentándolo" +
                                         "\nPulsa cualquier tecla para continuar");
                                 Console.ReadLine();

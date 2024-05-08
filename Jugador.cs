@@ -76,6 +76,7 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine("Sin objetos");
             }
         }
+
         public override string ToString()
         {
             return nombre; //Ampliar
