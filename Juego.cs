@@ -13,23 +13,53 @@ namespace ProyectoFinal_ivinader
 {
     internal class Juego
     {
-        private List<Jugador> jugadores;
-        private Tablero tablero;
-        private Dado[] dados;
-        private Solucion solucionCaso;
-        private List<Pista> pistas;
-        private List<IEsEvento> eventos;
-        private Random r;
+        protected List<Jugador> jugadores;
+        protected Tablero tablero;
+        //protected Dado[] dados;
+        protected DadoEvento dadoE; //En un principio estaban metidos en un array, pero me obligaba a repetir mucho código y decidí simplificarlo
+        protected DadoMovimiento dadoM;
+        protected Solucion solucionCaso;
+        protected List<Pista> pistas;
+        //private List<IEsEvento> eventos; -> Se han movido a la clase DadoEventos
+        protected Random r;
 
-        public Juego(List<Jugador> jugadores)
+        public Juego()
         {
-            this.jugadores = jugadores;
             tablero = new Tablero();
             r = new Random();
             //CargarHabitacionesEnFichero();
             pistas = CargarPistas();
-            eventos = CargarEventos();
+            CargarHabitaciones();
+            //eventos = CargarEventos();
             solucionCaso = CargarSolucion();
+            dadoE = new DadoEvento();
+            dadoM = new DadoMovimiento();
+        }
+        public Juego(Jugador j1): this()
+        {
+            jugadores = new List<Jugador>();
+            jugadores.Add(j1);
+            /*tablero = new Tablero();
+            r = new Random();
+            //CargarHabitacionesEnFichero();
+            pistas = CargarPistas();
+            //eventos = CargarEventos();
+            solucionCaso = CargarSolucion();*/
+
+        }
+        public Juego(List<Jugador> jugadores): this()
+        {
+            this.jugadores = jugadores;
+            /*tablero = new Tablero();
+            r = new Random();
+            //CargarHabitacionesEnFichero();
+            pistas = CargarPistas();
+            //eventos = CargarEventos();
+            solucionCaso = CargarSolucion();*/
+
+            /*dados = new Dado[2];
+            dados[0] = new DadoMovimiento();
+            dados[1] = new DadoEvento();
 
             if (jugadores.Count > 1)
             {
@@ -41,7 +71,7 @@ namespace ProyectoFinal_ivinader
             {
                 dados = new Dado[1];
                 dados[0] = new DadoEvento();
-            }
+            }*/
         }
         private List<Pista> CargarPistas()
         {
@@ -54,13 +84,13 @@ namespace ProyectoFinal_ivinader
 
             return pistas;
         }
-        private List<IEsEvento> CargarEventos()
+        /*private List<IEsEvento> CargarEventos()
         {
             eventos = new List<IEsEvento>();
 
-            /*string fichero = "habitaciones.json";
+            string fichero = "habitaciones.json";
             string jsonString = File.ReadAllText(fichero);
-            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);*/
+            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);
 
             List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
             habs.Add(new Habitacion("Cocina", "K"));
@@ -78,13 +108,13 @@ namespace ProyectoFinal_ivinader
             pistas.AddRange(habs);
 
             return eventos;
-        }
-
+        }*/
+    
         private Solucion CargarSolucion()
         {
             List<Pista> listaSospechososAuxiliar = pistas.FindAll(s => s is Sospechoso);
             List<Pista> listaArmasAuxiliar = pistas.FindAll(s => s is Arma);
-            List<IEsEvento> listaHabsAuxiliar = eventos.FindAll(s => s is Habitacion);
+            List<Pista> listaHabsAuxiliar = pistas.FindAll(s => s is Habitacion);
 
             Sospechoso culpable = (Sospechoso)listaSospechososAuxiliar[r.Next(0, listaSospechososAuxiliar.Count() - 1)];
             Arma arma = (Arma)listaArmasAuxiliar[r.Next(0, listaArmasAuxiliar.Count() - 1)];
@@ -108,10 +138,11 @@ namespace ProyectoFinal_ivinader
         {
             return pistas;
         }
-        public List<IEsEvento> GetEventos()
+        /*public List<IEsEvento> GetEventos()
         {
             return eventos;
-        }
+        }*/
+
         public void LanzarJuego(Jugador j)
         {
             //Implementar juego por turnos en multi
@@ -127,8 +158,9 @@ namespace ProyectoFinal_ivinader
                 j.MostrarObjetos(0, tablero.Alto + 3);
                 j.MostrarPistas(Console.WindowWidth/2, tablero.Alto + 3);
 
-                if (contadorPasos % 8 == 0) 
-                    OcurreEvento(j);
+                if (contadorPasos % 8 == 0)
+                    dadoE.ObtenerEvento(j, tablero);
+                    //OcurreEvento(j);
 
                 j.Icono.Dibujar();
                 j.Icono.Mover(tablero, j);
@@ -170,14 +202,34 @@ namespace ProyectoFinal_ivinader
                         }
                     }
                 }
-
             }
         }
-        public void OcurreEvento(Jugador j)
+        /*public void OcurreEvento(Jugador j)
         {
-            IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];
+            IEsEvento eventoElegido = null;
 
-            switch (eventoElegido.GetType().Name)
+            foreach(Dado d in dados)
+            {
+                if (d is DadoEvento)
+                    eventoElegido = ((DadoEvento)d).ObtenerEvento();
+
+                switch (eventoElegido.GetType().Name)
+                {
+                    case "Objeto":
+                        int probabilidad = r.Next(1, 50);
+                        if (probabilidad % 2 == 0)
+                            ((DadoEvento)d).DarObjeto(j);
+                        break;
+                    case "Habitacion":
+                        string letra = ((Habitacion)eventoElegido).LetraAsociada;
+                        ((DadoEvento)d).BloquearPuertas(letra, tablero);
+                        break;
+                }
+            }*/
+            
+            //IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];
+
+            /*switch (eventoElegido.GetType().Name)
             {
                 case "Objeto":
                     int probabilidad = r.Next(1, 50);
@@ -188,14 +240,14 @@ namespace ProyectoFinal_ivinader
                     string letra = ((Habitacion)eventoElegido).LetraAsociada;
                     BloquearPuertas(letra);
                     break;
-            }
-        }
-        public void DarObjeto(Jugador j)
+            }*/
+        //}
+        /*public void DarObjeto(Jugador j) //Movido a DadoEventos
         {
             List<IEsEvento> objetos = eventos.FindAll(o => o is Objeto);
 
             j.ListaObjetos.Add((Objeto)objetos[r.Next(1, objetos.Count)]);
-        }
+        }*/
         public void DarPista(Jugador j, string hab)
         {
             bool salir = false;
@@ -228,7 +280,7 @@ namespace ProyectoFinal_ivinader
             }
         }
         //Método PonerTrampa por implementar
-        public void BloquearPuertas(string letra)
+        /*public void BloquearPuertas(string letra, Tablero tablero) -> movido a Dado Eventos
         {
             eventos.ForEach(h =>
             {
@@ -238,8 +290,7 @@ namespace ProyectoFinal_ivinader
                     tablero.GestionPuertas(letra);
                 }
             });
-        }
-
+        }*/
         public bool Resolver() //Tratar de refactorizar. Repite mucho código
         {
             List<Pista> sol = CargarPistas();
@@ -343,6 +394,19 @@ namespace ProyectoFinal_ivinader
 
                 Console.WriteLine(lista[i]);       
             }
+        }
+        private void CargarHabitaciones()
+        {
+            List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
+            habs.Add(new Habitacion("Cocina", "K"));
+            habs.Add(new Habitacion("Comedor", "C"));
+            habs.Add(new Habitacion("Sala de estar", "S"));
+            habs.Add(new Habitacion("Habitación de invitados", "I"));
+            habs.Add(new Habitacion("Habitación principal", "H"));
+            habs.Add(new Habitacion("Baño", "B"));
+            habs.Add(new Habitacion("Estudio", "E"));
+
+            pistas.AddRange(habs);
         }
         private void CargarHabitacionesEnFichero()
         {

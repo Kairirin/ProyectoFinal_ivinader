@@ -9,6 +9,7 @@ namespace ProyectoFinal_ivinader
     internal class Menu
     {
         private SortedList<string, string> personajes;
+
         public Menu()
         {
             personajes = new SortedList<string, string>();
@@ -95,6 +96,8 @@ namespace ProyectoFinal_ivinader
                                 break;
                         }
                     }
+                    if (tecla.Key == ConsoleKey.Escape)
+                        salir = true;
                 }
             }
         }
@@ -112,7 +115,7 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine(personajes.Keys[i]);
             }
         }
-        private Jugador SeleccionPersonaje()
+        private Jugador SeleccionPersonaje(int turno)
         {
             Jugador j1 = null;
             int indice = 0;
@@ -120,9 +123,9 @@ namespace ProyectoFinal_ivinader
 
             while (!select)
             {
-                Console.Clear();
                 Console.CursorVisible = false;
                 Console.ResetColor();
+                Console.Clear();
 
                 MostrarPersonajes(indice);
 
@@ -132,39 +135,68 @@ namespace ProyectoFinal_ivinader
                 {
                     if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
                         indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < personajes.Count)
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < personajes.Count - 1)
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {
-                        j1 = new Jugador(personajes.Keys[indice], personajes.Values[indice]);
+                        j1 = new Jugador(personajes.Keys[indice], personajes.Values[indice], turno);
                         select = true;
                     }
+                    if (tecla.Key == ConsoleKey.Escape)
+                        MostrarMenu();
                 }
             }
-
             return j1;
         }
         public void ModoUnJugador()
         {
-            Jugador j1 = SeleccionPersonaje();
+            Console.Clear();
+            Jugador j1 = SeleccionPersonaje(1);
             //Crear Lista con Personaje
-            List<Jugador> jugadores = new List<Jugador>();
-            jugadores.Add(j1);
+            //List<Jugador> jugadores = new List<Jugador>();
+            //jugadores.Add(j1);
 
-            Juego cluedo = new Juego(jugadores);
+            Juego cluedo = new Juego(j1);
             cluedo.LanzarJuego(j1); //Método que sustituye a jugar turno en el modo de un jugador
         }
-        public static void ModoMultijugador()
+        public void ModoMultijugador()
         {
-            int numJugadores;
+            int numJugadores, contador = 0;
+            List<Jugador> jugadores = new List<Jugador>();
+            Jugador jugadorProvisional;
 
+            Console.Clear();
             Console.Write("Número de jugadores: ");
             numJugadores = Convert.ToInt32(Console.ReadLine()); // Botones de 2, 3 o 4.
 
             //Selección de personajes
             //Cargar fichero jugadores asociado a ficheros binarios de imágenes
+            while(contador != numJugadores) //Hacer al lado un listado de personajes seleccionados y que se vayan quitando de la lista disponible para seleccionar. Arreglar esto.
+            {
+                Console.Clear();
+                Console.WriteLine($"## Jugador {contador} ##");
+                jugadorProvisional = SeleccionPersonaje(contador + 1);
 
-            //Crear Lista con Personaje
+                if(jugadores.Count == 0)
+                {
+                    jugadores.Add(jugadorProvisional);
+                    contador++;
+                }
+                else if (!jugadores.Contains(jugadorProvisional))
+                {
+                    jugadores.Add(jugadorProvisional);
+                    contador++;
+                }
+                else
+                {
+                    Console.WriteLine("Personaje ya seleccionado");
+                    Thread.Sleep(1000);
+                }
+            }
+
+            Multijugador cluedo = new Multijugador(jugadores);
+            cluedo.LanzarJuego();
+
             //LanzarJuego(); //Pasar personaje como parámetro.
         }
         public static void MostrarInstrucciones()

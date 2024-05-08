@@ -15,12 +15,15 @@ namespace ProyectoFinal_ivinader
         private List<Pista> listaPistas;
         private List<Objeto> listaObjetos;
 
-        public Jugador(string nombre, string color)
+        public Jugador(string nombre, string color, int turno)
         {
             this.nombre = nombre;
             icono = new Sprite(color);
-            turno = 1;
-            activo = false;
+            this.turno = turno;
+            if (turno == 1)
+                activo = true;
+            else
+                activo = false;
             listaPistas = new List<Pista>();
             listaObjetos = new List<Objeto>();
         }
@@ -76,6 +79,19 @@ namespace ProyectoFinal_ivinader
         public override string ToString()
         {
             return nombre; //Ampliar
+        }
+        public void MostrarDatos(int pasos)
+        {
+            Console.ResetColor();
+            Console.SetCursorPosition(Console.WindowWidth / 2, 0);
+            Console.WriteLine(this);
+            Console.SetCursorPosition(Console.WindowWidth / 2, 1);
+            Console.WriteLine($"Pasos de este turno: {pasos}");
+        }
+        public override bool Equals(object? obj)
+        {
+            return obj is Jugador jugador &&
+                   nombre == jugador.nombre;
         }
     }
 }
