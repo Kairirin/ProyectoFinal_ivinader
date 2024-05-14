@@ -46,33 +46,34 @@ namespace ProyectoFinal_ivinader
         public void MostrarPistas(int x, int y)
         {
             Console.ResetColor();
-            Console.SetCursorPosition(x, y);
-            Console.WriteLine("Cuaderno de pistas: ");
             if (listaPistas.Count > 0)
             {
                 for(int i = 0; i < listaPistas.Count; i++)
                 {
-                    Console.SetCursorPosition(x, y + (i + 1));
+                    Console.SetCursorPosition(x, y + i);
                     Console.WriteLine(listaPistas[i]);
                 }
             }
             else
             {
-                Console.SetCursorPosition(x, y + 1);
+                Console.SetCursorPosition(x, y);
                 Console.WriteLine("Sin pistas");
             }
         }
         public void MostrarObjetos(int x, int y)
         {
             Console.ResetColor();
-            Console.SetCursorPosition(x, y);
-            Console.WriteLine($"Maletín de {nombre}: ");
             if (listaObjetos.Count > 0)
             {
-                listaObjetos.ForEach(p => Console.WriteLine(p));
+                for(int i = 0; i <listaObjetos.Count; i++)
+                {
+                    Console.SetCursorPosition(x, y +i);
+                    Console.WriteLine(listaObjetos[i]);
+                }
             }
             else
             {
+                Console.SetCursorPosition(x, y);
                 Console.WriteLine("Sin objetos");
             }
         }
@@ -81,13 +82,19 @@ namespace ProyectoFinal_ivinader
         {
             return nombre; //Ampliar
         }
+        public void MostrarDatos()
+        {
+            Console.ResetColor();
+            Console.SetCursorPosition(65, 1);
+            Console.WriteLine(this);
+        }
         public void MostrarDatos(int pasos)
         {
             Console.ResetColor();
-            Console.SetCursorPosition(Console.WindowWidth / 2, 0);
+            Console.SetCursorPosition(65, 1);
             Console.WriteLine(this);
-            Console.SetCursorPosition(Console.WindowWidth / 2, 1);
-            Console.WriteLine($"Pasos de este turno: {pasos}");
+            Console.SetCursorPosition(50, 2);
+            Console.WriteLine($"Pasos restantes: {pasos}");
         }
         public override bool Equals(object? obj)
         {

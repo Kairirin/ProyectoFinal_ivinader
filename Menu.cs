@@ -70,28 +70,28 @@ namespace ProyectoFinal_ivinader
                 {
                     ConsoleKeyInfo tecla = Console.ReadKey();
 
-                    if(tecla.Key == ConsoleKey.DownArrow && actual != 4)//Console.CursorTop != salir.Y)
+                    if(tecla.Key == ConsoleKey.DownArrow && actual != 4)
                     {
                         if (actual == 1)
                             actual = 3;
                         else
                             actual = 4;
                     }
-                    if (tecla.Key == ConsoleKey.UpArrow && actual !=1)//Console.CursorTop != unJugador.Y)
+                    if (tecla.Key == ConsoleKey.UpArrow && actual !=1)
                     {
                         if (actual == 3)
                             actual = 1;
                         else
                             actual = 2;
                     }
-                    if (tecla.Key == ConsoleKey.LeftArrow && actual != 1)//Console.CursorLeft != unJugador.X)
+                    if (tecla.Key == ConsoleKey.LeftArrow && actual != 1)
                     {
                         if (actual == 2)
                             actual = 1;
                         else
                             actual = 3;
                     }
-                    if (tecla.Key == ConsoleKey.RightArrow && actual != 2)//Console.CursorLeft != salir.X)
+                    if (tecla.Key == ConsoleKey.RightArrow && actual != 2)
                     {
                         if (actual == 1)
                             actual = 2;
@@ -132,11 +132,6 @@ namespace ProyectoFinal_ivinader
                 personajes.Add(trozos[0], trozos[1]);
             }
         }
-        private void IntroducirEleccionPersonaje()
-        {
-            string[] pantallaPj = CargaFichero.Cargar("eleccionPersonaje.txt");
-            Dibujar(pantallaPj);
-        }
         private void MostrarPersonajes(int indice)
         {
             for (int i = 0; i < personajes.Count; i++)
@@ -163,6 +158,7 @@ namespace ProyectoFinal_ivinader
         }
         private Jugador SeleccionPersonaje(int turno)
         {
+            string[] pantallaPj = CargaFichero.Cargar("eleccionPersonaje.txt");
             Jugador j1 = null;
             int indice = 0;
             bool select = false;
@@ -171,7 +167,7 @@ namespace ProyectoFinal_ivinader
             {
                 Console.CursorVisible = false;
                 Console.Clear();
-                IntroducirEleccionPersonaje();
+                Dibujar(pantallaPj);
                 MostrarPersonajes(indice);
 
                 Console.ResetColor();
@@ -207,7 +203,7 @@ namespace ProyectoFinal_ivinader
             Jugador j1 = SeleccionPersonaje(1);
 
             Juego cluedo = new Juego(j1);
-            cluedo.LanzarJuego(j1); //Método que sustituye a jugar turno en el modo de un jugador
+            cluedo.LanzarJuego(); //Método que sustituye a jugar turno en el modo de un jugador
         }
         private int IntroducirNumJugadores()
         {
@@ -222,6 +218,7 @@ namespace ProyectoFinal_ivinader
                 Console.SetCursorPosition(0, 0);
                 Console.CursorVisible = false;
                 Dibujar(pantalla);
+
 
                 Console.SetCursorPosition(cursor.X, cursor.Y);
                 Console.WriteLine(">");
@@ -286,8 +283,6 @@ namespace ProyectoFinal_ivinader
 
             Multijugador cluedo = new Multijugador(jugadores);
             cluedo.LanzarJuego();
-
-            //LanzarJuego(); //Pasar personaje como parámetro.
         }
         public static void MostrarInstrucciones()
         {

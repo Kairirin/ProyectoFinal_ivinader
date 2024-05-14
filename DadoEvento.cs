@@ -61,7 +61,9 @@ namespace ProyectoFinal_ivinader
         }
         private List<IEsEvento> CargarEventos()
         {
+            List<Objeto> objetos = CargaFichero.DeserializarXML("eventos.xml");
             eventos = new List<IEsEvento>();
+            eventos.AddRange(objetos);
 
             /*string fichero = "habitaciones.json";
             string jsonString = File.ReadAllText(fichero);
@@ -76,9 +78,6 @@ namespace ProyectoFinal_ivinader
             habs.Add(new Habitacion("Baño", "B"));
             habs.Add(new Habitacion("Estudio", "E"));
 
-            eventos.Add(new Objeto("Aspirina", "Evita perder un turno"));
-            eventos.Add(new Objeto("Ganzúa", "Abre una puerta cerrada"));
-            eventos.Add(new Objeto("Trofeo", "Obtienes una pista extra al llegar a una ubicación"));
             eventos.AddRange(habs);
             //pistas.AddRange(habs);
 

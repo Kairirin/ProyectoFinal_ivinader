@@ -13,72 +13,34 @@ namespace ProyectoFinal_ivinader
         {
             jugadores.Sort((j1,j2) => j1.Turno.CompareTo(j2.Turno));
         }
-        public void LanzarJuego()
-        {
-            int turnos = jugadores.Count;
-            int contador = 0;
-            bool resuelto = false;
-
-            while(!resuelto)
-            {
-                foreach (Jugador j in jugadores)
-                {
-                    if (j.Activo)
-                        resuelto = JugarTurno(j);
-                }
-
-                if(!resuelto)
-                {
-                    if (contador < turnos - 1)
-                        contador++;
-                    else
-                        contador = 0;
-
-                    jugadores[contador].Activo = true;
-                }
-            }
-
-            /*if(resuelto)
-            {
-                Console.Clear();
-                Console.SetCursorPosition(Console.WindowWidth / 3, Console.WindowHeight / 2);
-                Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
-            }*/
-        }
-
-        public bool JugarTurno(Jugador j)
+        public override bool JugarTurno(Jugador j)
         {
             //Implementar juego por turnos en multi
-            int contadorPasos = 0, pasos;
+            int pasos;
             bool resuelto = false;
 
             pasos = dadoM.Lanzar();
             dadoE.ObtenerEvento(j, tablero);
 
-            while (contadorPasos < pasos)
+            while (pasos > 0)
             {
                 Console.Clear();
-                bool colision = false;
+                bool ocupada = false;
                 tablero.MostrarTablero();
 
                 j.MostrarDatos(pasos);
-                j.MostrarObjetos(0, tablero.Alto + 3);
-                j.MostrarPistas(Console.WindowWidth / 2, tablero.Alto + 3);
+                j.MostrarObjetos(4, 18);
+                j.MostrarPistas(54, 11);
 
-                //if (contadorPasos % 8 == 0)
-                  //  OcurreEvento(j);
-
-                foreach(Jugador sprites in jugadores)
+                foreach (Jugador sprites in jugadores)
                 {
                     sprites.Icono.Dibujar();
                 }
 
-                //j.Icono.Dibujar(); -> En el modo multijugador este método ha sido sustituido por el foreach que permite que todos los sprites salgan por pantalla todo el rato
-                j.Icono.Mover(tablero, jugadores, j, ref colision);
-                if(!colision)
-                    contadorPasos++;
-                else
-                    contadorPasos++;
+                j.Icono.Mover(tablero, jugadores, j, ref ocupada);
+                if (!ocupada)
+                    pasos--;
+
 
                 if (tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R")
                 {
@@ -88,40 +50,32 @@ namespace ProyectoFinal_ivinader
                         DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
-                    contadorPasos = pasos;
+                    pasos = 0;
                 }
                 else
                 {
                     if (tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) == "R")
                     {
-                        Console.SetCursorPosition(0, ((tablero.Alto + 3) + (j.ListaObjetos.Count + 3)));
-                        Console.WriteLine("¿Quieres resolver? (Si/No)");
-                        string respuesta = Console.ReadLine();
-
-                        if (respuesta.ToUpper() == "SI")
+                        if (Resolver())
                         {
-                            if (Resolver())
-                            {
-                                contadorPasos = pasos;
-                                Console.Clear();
-                                Console.SetCursorPosition(Console.WindowWidth / 3, Console.WindowHeight / 2);
-                                Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
-                                Console.ReadLine();
-                                resuelto = true;
-                            }
-                            else
-                            {
-                                contadorPasos = pasos;
-                                Console.WriteLine("Sigue intentándolo" +
-                                        "\nPulsa cualquier tecla para continuar");
-                                Console.ReadLine();
-                            }
+                            DibujarCuadro();
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                        }
+                        else
+                        {
+                            DibujarCuadro();
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.WriteLine("Sigue intentándolo");
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + 1);
+                            Console.WriteLine(" Pulsa cualquier tecla para continuar");
+                            Console.ReadLine();
                         }
                     }
                 }
             }
 
-            if (contadorPasos == pasos)
+            if (pasos == 0)
                 j.Activo = false;
 
             return resuelto;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,8 +16,7 @@ namespace ProyectoFinal_ivinader
     {
         protected List<Jugador> jugadores;
         protected Tablero tablero;
-        //protected Dado[] dados;
-        protected DadoEvento dadoE; //En un principio estaban metidos en un array, pero me obligaba a repetir mucho código y decidí simplificarlo
+        protected DadoEvento dadoE; 
         protected DadoMovimiento dadoM;
         protected Solucion solucionCaso;
         protected List<Pista> pistas;
@@ -33,45 +33,16 @@ namespace ProyectoFinal_ivinader
             //eventos = CargarEventos();
             solucionCaso = CargarSolucion();
             dadoE = new DadoEvento();
-            dadoM = new DadoMovimiento();
         }
         public Juego(Jugador j1): this()
         {
             jugadores = new List<Jugador>();
             jugadores.Add(j1);
-            /*tablero = new Tablero();
-            r = new Random();
-            //CargarHabitacionesEnFichero();
-            pistas = CargarPistas();
-            //eventos = CargarEventos();
-            solucionCaso = CargarSolucion();*/
-
         }
         public Juego(List<Jugador> jugadores): this()
         {
             this.jugadores = jugadores;
-            /*tablero = new Tablero();
-            r = new Random();
-            //CargarHabitacionesEnFichero();
-            pistas = CargarPistas();
-            //eventos = CargarEventos();
-            solucionCaso = CargarSolucion();*/
-
-            /*dados = new Dado[2];
-            dados[0] = new DadoMovimiento();
-            dados[1] = new DadoEvento();
-
-            if (jugadores.Count > 1)
-            {
-                dados = new Dado[2];
-                dados[0] = new DadoMovimiento();
-                dados[1] = new DadoEvento();
-            }
-            else
-            {
-                dados = new Dado[1];
-                dados[0] = new DadoEvento();
-            }*/
+            dadoM = new DadoMovimiento();
         }
         private List<Pista> CargarPistas()
         {
@@ -84,32 +55,6 @@ namespace ProyectoFinal_ivinader
 
             return pistas;
         }
-        /*private List<IEsEvento> CargarEventos()
-        {
-            eventos = new List<IEsEvento>();
-
-            string fichero = "habitaciones.json";
-            string jsonString = File.ReadAllText(fichero);
-            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);
-
-            List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
-            habs.Add(new Habitacion("Cocina", "K"));
-            habs.Add(new Habitacion("Comedor", "C"));
-            habs.Add(new Habitacion("Sala de estar", "S"));
-            habs.Add(new Habitacion("Habitación de invitados", "I"));
-            habs.Add(new Habitacion("Habitación principal", "H"));
-            habs.Add(new Habitacion("Baño", "B"));
-            habs.Add(new Habitacion("Estudio", "E"));
-
-            eventos.Add(new Objeto("Aspirina", "Evita perder un turno"));
-            eventos.Add(new Objeto("Ganzúa", "Abre una puerta cerrada"));
-            eventos.Add(new Objeto("Trofeo", "Obtienes una pista extra al llegar a una ubicación"));
-            eventos.AddRange(habs);
-            pistas.AddRange(habs);
-
-            return eventos;
-        }*/
-    
         private Solucion CargarSolucion()
         {
             List<Pista> listaSospechososAuxiliar = pistas.FindAll(s => s is Sospechoso);
@@ -126,7 +71,7 @@ namespace ProyectoFinal_ivinader
 
             return new Solucion(culpable, arma, escenaCrimen);
         }
-        public List<Jugador> GetJugadores()
+        public List<Jugador> GetJugadores() //Borrar y hacer propiedades
         {
             return jugadores;
         }
@@ -142,11 +87,40 @@ namespace ProyectoFinal_ivinader
         {
             return eventos;
         }*/
-
-        public void LanzarJuego(Jugador j)
+        public void LanzarJuego()
         {
-            //Implementar juego por turnos en multi
-            //Lanzar dados en multijugador
+            bool resuelto = false;
+            int turnos = jugadores.Count;
+            int contador = 0;
+
+            while (!resuelto)
+            {
+                if (turnos == 1)
+                {
+                    resuelto = JugarTurno(jugadores[0]);
+                }
+                else
+                {
+                    foreach (Jugador j in jugadores)
+                    {
+                        if (j.Activo)
+                            resuelto = JugarTurno(j);
+                    }
+
+                    if (!resuelto)
+                    {
+                        if (contador < turnos - 1)
+                            contador++;
+                        else
+                            contador = 0;
+
+                        jugadores[contador].Activo = true;
+                    }
+                }
+            }
+        }
+        public virtual bool JugarTurno(Jugador j)
+        {
             int contadorPasos = 0;
             bool resuelto = false;
 
@@ -156,12 +130,12 @@ namespace ProyectoFinal_ivinader
                 bool colision = false;
                 tablero.MostrarTablero();
 
-                j.MostrarObjetos(0, tablero.Alto + 3);
-                j.MostrarPistas(Console.WindowWidth/2, tablero.Alto + 3);
+                j.MostrarDatos();
+                j.MostrarObjetos(4, 18);
+                j.MostrarPistas(54, 11);
 
                 if (contadorPasos % 8 == 0)
                     dadoE.ObtenerEvento(j, tablero);
-                    //OcurreEvento(j);
 
                 j.Icono.Dibujar();
                 j.Icono.Mover(tablero, jugadores, j, ref colision);
@@ -180,81 +154,32 @@ namespace ProyectoFinal_ivinader
                 {
                     if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) == "R")
                     {
-                        Console.SetCursorPosition(0, ((tablero.Alto + 3) + (j.ListaObjetos.Count + 3)));
-                        Console.WriteLine("¿Quieres resolver? (Si/No)");
-                        string respuesta = Console.ReadLine();
-
-                        if (respuesta.ToUpper() == "SI")
+                        if (Resolver())
                         {
-                            if (Resolver())
-                            {
-                                Console.Clear();
-                                Console.SetCursorPosition(Console.WindowWidth / 3, Console.WindowHeight / 2);
-                                Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
-                                Console.ReadLine();
-                                resuelto = true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Sigue intentándolo" +
-                                        "\nPulsa cualquier tecla para continuar");
-                                Console.ReadLine();
-                            }  
+                            DibujarCuadro();
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                        }
+                        else
+                        {
+                            DibujarCuadro();
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.WriteLine("Sigue intentándolo");
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + 1);
+                            Console.WriteLine(" Pulsa cualquier tecla para continuar");
+                            Console.ReadLine();
                         }
                     }
                 }
             }
+            return resuelto;
         }
-        /*public void OcurreEvento(Jugador j)
-        {
-            IEsEvento eventoElegido = null;
-
-            foreach(Dado d in dados)
-            {
-                if (d is DadoEvento)
-                    eventoElegido = ((DadoEvento)d).ObtenerEvento();
-
-                switch (eventoElegido.GetType().Name)
-                {
-                    case "Objeto":
-                        int probabilidad = r.Next(1, 50);
-                        if (probabilidad % 2 == 0)
-                            ((DadoEvento)d).DarObjeto(j);
-                        break;
-                    case "Habitacion":
-                        string letra = ((Habitacion)eventoElegido).LetraAsociada;
-                        ((DadoEvento)d).BloquearPuertas(letra, tablero);
-                        break;
-                }
-            }*/
-            
-            //IEsEvento eventoElegido = eventos[r.Next(0, eventos.Count - 1)];
-
-            /*switch (eventoElegido.GetType().Name)
-            {
-                case "Objeto":
-                    int probabilidad = r.Next(1, 50);
-                    if(probabilidad % 2 == 0)
-                        DarObjeto(j);
-                    break;
-                case "Habitacion":
-                    string letra = ((Habitacion)eventoElegido).LetraAsociada;
-                    BloquearPuertas(letra);
-                    break;
-            }*/
-        //}
-        /*public void DarObjeto(Jugador j) //Movido a DadoEventos
-        {
-            List<IEsEvento> objetos = eventos.FindAll(o => o is Objeto);
-
-            j.ListaObjetos.Add((Objeto)objetos[r.Next(1, objetos.Count)]);
-        }*/
         public void DarPista(Jugador j, string hab)
         {
             bool salir = false;
             int contador = 0;
 
-            List<Pista> pistaProvisional = pistas.FindAll(p => p.LetraAsociada == hab); //pistas[r.Next(1, pistas.Count)]; En un principio existía la posibilidad de dar las pistas aleatoriamente, pero me ha parecido interesante dar las que estén asociadas a la habitación donde está el jugador, de esta manera tiene que recorrerer todo el mapa.
+            List<Pista> pistaProvisional = pistas.FindAll(p => p.LetraAsociada == hab);
 
             while (!salir)
             {
@@ -292,52 +217,46 @@ namespace ProyectoFinal_ivinader
                 }
             });
         }*/
-        public bool Resolver() //Tratar de refactorizar. Repite mucho código
+        protected bool Resolver()
         {
-            List<Pista> sol = CargarPistas();
+            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
+            List<Pista> pistas = CargarPistas();
+            Sospechoso propuestaCulpable = (Sospechoso)SeleccionarSolucion(pistas, "sospechoso");
+            Arma propuestaArma = (Arma)SeleccionarSolucion(pistas, "arma");
+            Habitacion propuestaEstancia = (Habitacion)SeleccionarSolucion(pistas, "habitacion");
+
+            return solucionCaso == new Solucion(propuestaCulpable, propuestaArma, propuestaEstancia);
+        }
+        private Pista SeleccionarSolucion(List<Pista> pistas, string tipo)
+        {
             List<Pista> aux = new List<Pista>();
-            int indice = 0;
+            Pista pista = null;
             bool salir = false;
-            Sospechoso propuestaCulpable = null;
-            Arma propuestaArma = null;
-            Habitacion propuestaEstancia = null;
+            int indice = 0;
 
             Console.SetCursorPosition(0, indice);
             Console.CursorVisible = false;
 
             while (!salir)
             {
-                Console.Clear();
                 Console.ResetColor();
-                Console.WriteLine("Elige sospechoso: ");
-                aux = sol.Where(s => s is Sospechoso).ToList();
-                Mostrar(aux, indice);
-                ConsoleKeyInfo tecla = Console.ReadKey(true);
-                
-                if(!Console.KeyAvailable)
+                DibujarCuadro();
+                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                Console.WriteLine($"Elige {tipo}: ");
+
+                switch(tipo)
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
-                        indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
-                        indice++;
-                    if (tecla.Key == ConsoleKey.Enter)
-                    {
-                        propuestaCulpable = (Sospechoso)aux[indice];
-                        salir = true;
-                    }
+                    case "sospechoso":
+                        aux = pistas.Where(s => s is Sospechoso).ToList();
+                        break;
+                    case "arma":
+                        aux = pistas.Where(a => a is Arma).ToList();
+                        break;
+                    case "habitacion":
+                        aux = CargarHabitaciones();
+                        break;
                 }
-            }
 
-            salir = false;
-            indice = 0;
-            Console.SetCursorPosition(0, indice);
-
-            while (!salir)
-            {
-                Console.Clear();
-                Console.ResetColor();
-                Console.WriteLine("Elige arma: ");
-                aux = sol.Where(s => s is Arma).ToList();
                 Mostrar(aux, indice);
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
 
@@ -349,51 +268,36 @@ namespace ProyectoFinal_ivinader
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {
-                        propuestaArma = (Arma)aux[indice];
+                        pista = aux[indice];
                         salir = true;
                     }
                 }
             }
 
-            salir = false;
-            indice = 0;
-            Console.SetCursorPosition(0, indice);
+            return pista;
+        }
+        protected void DibujarCuadro()
+        {
+            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
 
-            while (!salir)
+            for (int i = 0; i < cuadro.Length; i++)
             {
-                Console.Clear();
-                Console.ResetColor();
-                Console.WriteLine("Elige escena del crimen: ");
-                aux = CargarHabitaciones();
-                Mostrar(aux, indice);
-                ConsoleKeyInfo tecla = Console.ReadKey(true);
+                Console.SetCursorPosition(Console.WindowWidth / 4, 7 + i);
+                Console.WriteLine(cuadro[i]);
 
-                if (!Console.KeyAvailable)
-                {
-                    if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
-                        indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
-                        indice++;
-                    if (tecla.Key == ConsoleKey.Enter)
-                    {
-                        propuestaEstancia = (Habitacion)aux[indice];
-                        salir = true;
-                    }
-                }
             }
-
-            return solucionCaso == new Solucion(propuestaCulpable, propuestaArma, propuestaEstancia);
         }
         private void Mostrar(List<Pista> lista, int indice)
         {
-            for(int i = 0; i < lista.Count; i++)
+            for (int i = 0; i < lista.Count; i++)
             {
                 if (indice == i)
                     Console.ForegroundColor = ConsoleColor.Red;
                 else
                     Console.ResetColor();
 
-                Console.WriteLine(lista[i]);       
+                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + i + 1);
+                Console.WriteLine(lista[i]);
             }
         }
         private List<Pista> CargarHabitaciones()

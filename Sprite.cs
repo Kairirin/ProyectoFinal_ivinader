@@ -8,50 +8,49 @@ namespace ProyectoFinal_ivinader
 {
     internal class Sprite: IEsMovible
     {
-        private int x;
+        private int x; //Cambiarlo por posición????
         private int y;
         private string color;
-        //private imagen???? Asociar aquí a las imágenes
         public Sprite(string color)
         {
-            x = 14; 
-            y = 13;
+            x = 26; 
+            y = 10;
             this.color = color;
         }
         public int X { get => x; set => x = value; }
         public int Y { get => y; set => y = value; }
         public string Color { get => color; set => color = value; }
 
-        private bool ComprobarColision(List<Jugador> jugadores, Jugador j)
+        private bool ComprobarOcupada(List<Jugador> jugadores, Jugador j)
         {
-            bool colision = false;
+            bool ocupada = false;
 
             for (int i = 0; i < jugadores.Count; i++)
             {
                 if (j != jugadores[i])
                 {
                     if (j.Icono.X == jugadores[i].Icono.X && j.Icono.Y == jugadores[i].Icono.Y)
-                        colision = true;
+                        ocupada = true;
                 }
             }
 
-            return colision;
+            return ocupada;
         }
-        public void Mover(Tablero t, List<Jugador> jugadores, Jugador j, ref bool colision)
+        public void Mover(Tablero t, List<Jugador> jugadores, Jugador j, ref bool ocupada) //MIRAR BIEN ESTE MÉTODO. MUY LARGO
         {
             Console.CursorVisible = false;
 
             ConsoleKeyInfo tecla = Console.ReadKey();
 
-            if (tecla.Key == ConsoleKey.UpArrow && y > 1)
+            if (tecla.Key == ConsoleKey.UpArrow && y > Tablero.Y1_TABLERO1)
             {
-                if (t.ComprobarEspacio(x, y - 1) != "1" && t.ComprobarEspacio(x,y-1) != "P" && !ComprobarColision(jugadores, j))
+                if (t.ComprobarEspacio(x, y - 1) != "1" && t.ComprobarEspacio(x,y-1) != "P" && !ComprobarOcupada(jugadores, j))
                 {
                     y--;
-                    if (ComprobarColision(jugadores, j))
+                    if (ComprobarOcupada(jugadores, j))
                     {
                         y++;
-                        colision = true;
+                        ocupada = true;
                     }
                 }
 
@@ -65,15 +64,15 @@ namespace ProyectoFinal_ivinader
                     }
                 }
             }
-            if (tecla.Key == ConsoleKey.DownArrow && y < t.Alto)
+            if (tecla.Key == ConsoleKey.DownArrow && y < Tablero.YN_TABLERO1)
             {
                 if (t.ComprobarEspacio(x, y + 1) != "1" && t.ComprobarEspacio(x, y + 1) != "P")
                 {
                     y++;
-                    if (ComprobarColision(jugadores, j))
+                    if (ComprobarOcupada(jugadores, j))
                     {
                         y--;
-                        colision = true;
+                        ocupada = true;
                     }
                 }
                 else
@@ -86,15 +85,15 @@ namespace ProyectoFinal_ivinader
                     }
                 }
             }
-            if (tecla.Key == ConsoleKey.RightArrow && x < t.Ancho)
+            if (tecla.Key == ConsoleKey.RightArrow && x < Tablero.XN_TABLERO1)
             {
                 if (t.ComprobarEspacio(x+1, y) != "1" && t.ComprobarEspacio(x+1, y) != "P")
                 {
                     x++;
-                    if (ComprobarColision(jugadores, j))
+                    if (ComprobarOcupada(jugadores, j))
                     {
                         x--;
-                        colision = true;
+                        ocupada = true;
                     }
                 }
                 else
@@ -107,15 +106,15 @@ namespace ProyectoFinal_ivinader
                     }
                 }
             }
-            if (tecla.Key == ConsoleKey.LeftArrow && x > 0)
+            if (tecla.Key == ConsoleKey.LeftArrow && x > Tablero.X1_TABLERO1)
             {
                 if (t.ComprobarEspacio(x-1, y) != "1" && t.ComprobarEspacio(x - 1, y) != "P")
                 {
                     x--;
-                    if (ComprobarColision(jugadores, j))
+                    if (ComprobarOcupada(jugadores, j))
                     {
                         x++;
-                        colision = true;
+                        ocupada = true;
                     }
                 }
                 else

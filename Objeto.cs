@@ -26,7 +26,7 @@ namespace ProyectoFinal_ivinader
         }
         public override string ToString()
         {
-            return $"{nombre}\n {descripcion}";
+            return $"{nombre}: {descripcion}";
         }
     }
 }

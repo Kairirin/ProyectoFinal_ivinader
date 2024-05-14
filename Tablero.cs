@@ -9,28 +9,24 @@ namespace ProyectoFinal_ivinader
 {
     public class Tablero
     {
-        private int ancho;
-        private int alto;
+        private const int X1_TABLERO = 11;
+        private const int XN_TABLERO = 39;
+        private const int Y1_TABLERO = 1;
+        private const int YN_TABLERO = 14;
+
         private string[] tablero;
+
+        public static int X1_TABLERO1 => X1_TABLERO;
+
+        public static int XN_TABLERO1 => XN_TABLERO;
+
+        public static int Y1_TABLERO1 => Y1_TABLERO;
+
+        public static int YN_TABLERO1 => YN_TABLERO;
+
         public Tablero()
         {
-            ancho = 28;//Cambiar todo esto
-            alto = 14;
-            tablero = new string[alto];
-            CargarTablero();
-        }
-
-        private void CargarTablero()
-        {
-
-            if (File.Exists("tableroInferior.txt"))
-            {
-                tablero = File.ReadAllLines("tableroInferior.txt");
-            }
-            else
-            {
-                Console.WriteLine("No se encuentra fichero de tablero");
-            }
+            tablero = CargaFichero.Cargar("tableroJuego.txt");
         }
         public void MostrarTablero()
         {
@@ -41,13 +37,13 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine(tablero[i]);
             }
         }
-        public void GestionPuertas(string letra)
+        public void GestionPuertas(string letra) //Volver con todo el tema de la posiciones
         {
             string aux1, aux2, resultado;
 
-            for (int i = 0; i < tablero.Length; i++)
+            for (int i = Y1_TABLERO; i < YN_TABLERO; i++)
             {
-                for(int j = 0; j < tablero[i].Length; j++)
+                for(int j = X1_TABLERO; j < XN_TABLERO; j++)
                 {
                     if (tablero[i][j] == 'P' && (tablero[i - 1][j] == Convert.ToChar(letra) || tablero[i + 1][j] == Convert.ToChar(letra) || tablero[i][j+1] == Convert.ToChar(letra) || tablero[i][j-1] == Convert.ToChar(letra)))
                     {
@@ -78,8 +74,6 @@ namespace ProyectoFinal_ivinader
             resultado = aux1 + 'p' + aux2;
             tablero[y] = resultado;
         }
-        public int Ancho { get => ancho; set => ancho = value; }
-        public int Alto { get => alto; set => alto = value; }
         public string ComprobarEspacio(int x, int y)
         {
             return tablero[y][x].ToString();
