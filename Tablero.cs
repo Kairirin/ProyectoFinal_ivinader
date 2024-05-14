@@ -14,7 +14,7 @@ namespace ProyectoFinal_ivinader
         private string[] tablero;
         public Tablero()
         {
-            ancho = 28;
+            ancho = 28;//Cambiar todo esto
             alto = 14;
             tablero = new string[alto];
             CargarTablero();
@@ -25,7 +25,6 @@ namespace ProyectoFinal_ivinader
 
             if (File.Exists("tableroInferior.txt"))
             {
-  
                 tablero = File.ReadAllLines("tableroInferior.txt");
             }
             else

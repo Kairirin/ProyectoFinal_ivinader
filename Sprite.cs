@@ -135,7 +135,7 @@ namespace ProyectoFinal_ivinader
         {
             AplicarColor();
             Console.SetCursorPosition(x, y);
-            Console.Write('O');
+            Console.Write('■');
         }
         public void AplicarColor()
         {

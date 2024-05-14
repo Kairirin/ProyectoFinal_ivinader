@@ -7,8 +7,6 @@ namespace ProyectoFinal_ivinader
         public static void InicializarConsola()
         {
             Console.Title = "Se ha programado un crimen";
-            //Configurar pantalla completa o centrar - Windows forms
-            //Cargar imagen de fondo
         }
         static void Main(string[] args)
         {
