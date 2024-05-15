@@ -42,19 +42,19 @@ namespace ProyectoFinal_ivinader
                     pasos--;
 
 
-                if (tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R")
+                if (tablero.EstaEnHabitacion(j.Icono.PosicionSprite))
                 {
-                    DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                    DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                     if (j.ListaObjetos.Contains(new Objeto("Trofeo", "")))
                     {
-                        DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                        DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
                     pasos = 0;
                 }
                 else
                 {
-                    if (tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) == "R")
+                    if (tablero.DevolverLetra(j.Icono.PosicionSprite) == "R")
                     {
                         if (Resolver())
                         {

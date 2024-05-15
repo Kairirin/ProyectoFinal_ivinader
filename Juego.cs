@@ -141,18 +141,18 @@ namespace ProyectoFinal_ivinader
                 j.Icono.Mover(tablero, jugadores, j, ref colision);
                 contadorPasos++;
                 
-                if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "1" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "P" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "p" && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != " " && tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) != "R") 
+                if(tablero.EstaEnHabitacion(j.Icono.PosicionSprite))
                 {
-                    DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                    DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                     if(j.ListaObjetos.Contains(new Objeto("Trofeo","")))
                     {
-                        DarPista(j, tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y));
+                        DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
                 }
                 else
                 {
-                    if(tablero.ComprobarEspacio(j.Icono.X, j.Icono.Y) == "R")
+                    if(tablero.DevolverLetra(j.Icono.PosicionSprite) == "R")
                     {
                         if (Resolver())
                         {
@@ -302,7 +302,7 @@ namespace ProyectoFinal_ivinader
         }
         private List<Pista> CargarHabitaciones()
         {
-            List<Pista> habs = new List<Pista>(); //Anotar en informe que no funciona la deserialización json
+            List<Pista> habs = new List<Pista>();
             habs.Add(new Habitacion("Cocina", "K"));
             habs.Add(new Habitacion("Comedor", "C"));
             habs.Add(new Habitacion("Sala de estar", "S"));
@@ -312,25 +312,6 @@ namespace ProyectoFinal_ivinader
             habs.Add(new Habitacion("Estudio", "E"));
 
             return habs;
-        }
-        private void CargarHabitacionesEnFichero()
-        {
-            //Método empleado para crear el .json que cargará las habitaciones. No ha vuelto a ser utilizado
-            List<Habitacion> habs = new List<Habitacion>();
-            habs.Add(new Habitacion("Cocina", "K"));
-            habs.Add(new Habitacion("Comedor", "C"));
-            habs.Add(new Habitacion("Sala de estar", "S"));
-            habs.Add(new Habitacion("Habitación de invitados", "I"));
-            habs.Add(new Habitacion("Habitación principal", "H"));
-            habs.Add(new Habitacion("Baño", "B"));
-            habs.Add(new Habitacion("Estudio", "E"));
-            habs.Add(new Habitacion("Puesto de policía", "R"));
-
-            string fichero = "habitaciones.json";
-
-            JsonSerializerOptions opciones = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve, WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(habs, opciones);
-            File.WriteAllText(fichero, jsonString);
         }
     }
 }

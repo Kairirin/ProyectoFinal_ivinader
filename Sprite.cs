@@ -8,18 +8,17 @@ namespace ProyectoFinal_ivinader
 {
     internal class Sprite: IEsMovible
     {
-        private int x; //Cambiarlo por posición????
-        private int y;
+        private static Posicion mov_vertical = new Posicion(0, 1);
+        private static Posicion mov_horizontal = new Posicion(1, 0);
+        private Posicion posicionSprite;
         private string color;
         public Sprite(string color)
         {
-            x = 26; 
-            y = 10;
+            posicionSprite = new Posicion(26, 10);
             this.color = color;
         }
-        public int X { get => x; set => x = value; }
-        public int Y { get => y; set => y = value; }
         public string Color { get => color; set => color = value; }
+        public Posicion PosicionSprite { get => posicionSprite; set => posicionSprite = value; }
 
         private bool ComprobarOcupada(List<Jugador> jugadores, Jugador j)
         {
@@ -29,7 +28,7 @@ namespace ProyectoFinal_ivinader
             {
                 if (j != jugadores[i])
                 {
-                    if (j.Icono.X == jugadores[i].Icono.X && j.Icono.Y == jugadores[i].Icono.Y)
+                    if (j.Icono.PosicionSprite == jugadores[i].Icono.PosicionSprite)
                         ocupada = true;
                 }
             }
@@ -42,98 +41,97 @@ namespace ProyectoFinal_ivinader
 
             ConsoleKeyInfo tecla = Console.ReadKey();
 
-            if (tecla.Key == ConsoleKey.UpArrow && y > Tablero.Y1_TABLERO1)
+            if (tecla.Key == ConsoleKey.UpArrow && posicionSprite.Y > Tablero.Y1_TABLERO1)
             {
-                if (t.ComprobarEspacio(x, y - 1) != "1" && t.ComprobarEspacio(x,y-1) != "P" && !ComprobarOcupada(jugadores, j))
+                if(t.ComprobarEspacio(posicionSprite - mov_vertical))
                 {
-                    y--;
+                    posicionSprite.Y--;
                     if (ComprobarOcupada(jugadores, j))
                     {
-                        y++;
-                        ocupada = true;
-                    }
-                }
-
-                else
-                {
-                    if (t.ComprobarEspacio(x, y - 1) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
-                    {
-                        y--;
-                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
-                        t.GestionPuertas(x, y);
-                    }
-                }
-            }
-            if (tecla.Key == ConsoleKey.DownArrow && y < Tablero.YN_TABLERO1)
-            {
-                if (t.ComprobarEspacio(x, y + 1) != "1" && t.ComprobarEspacio(x, y + 1) != "P")
-                {
-                    y++;
-                    if (ComprobarOcupada(jugadores, j))
-                    {
-                        y--;
+                        posicionSprite.Y++;
                         ocupada = true;
                     }
                 }
                 else
                 {
-                    if (t.ComprobarEspacio(x, y + 1) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    if (t.ComprobarPuerta(posicionSprite - mov_vertical) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
-                        y++;
+                        posicionSprite.Y--;
                         j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
-                        t.GestionPuertas(x, y);
+                        t.GestionPuertas(posicionSprite);
                     }
                 }
             }
-            if (tecla.Key == ConsoleKey.RightArrow && x < Tablero.XN_TABLERO1)
+            if (tecla.Key == ConsoleKey.DownArrow && posicionSprite.Y < Tablero.YN_TABLERO1)
             {
-                if (t.ComprobarEspacio(x+1, y) != "1" && t.ComprobarEspacio(x+1, y) != "P")
+                if (t.ComprobarEspacio(posicionSprite + mov_vertical))
                 {
-                    x++;
+                    posicionSprite.Y++;
                     if (ComprobarOcupada(jugadores, j))
                     {
-                        x--;
+                        posicionSprite.Y--;
                         ocupada = true;
                     }
                 }
                 else
                 {
-                    if (t.ComprobarEspacio(x + 1, y) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    if (t.ComprobarPuerta(posicionSprite + mov_vertical) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
-                        x++;
+                        posicionSprite.Y++;
                         j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
-                        t.GestionPuertas(x, y);
+                        t.GestionPuertas(posicionSprite);
                     }
                 }
             }
-            if (tecla.Key == ConsoleKey.LeftArrow && x > Tablero.X1_TABLERO1)
+            if (tecla.Key == ConsoleKey.RightArrow && posicionSprite.X < Tablero.XN_TABLERO1)
             {
-                if (t.ComprobarEspacio(x-1, y) != "1" && t.ComprobarEspacio(x - 1, y) != "P")
+                if (t.ComprobarEspacio(posicionSprite + mov_horizontal))
                 {
-                    x--;
+                    posicionSprite.X++;
                     if (ComprobarOcupada(jugadores, j))
                     {
-                        x++;
+                        posicionSprite.X--;
                         ocupada = true;
                     }
                 }
                 else
                 {
-                    if (t.ComprobarEspacio(x - 1, y) == "P" && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    if (t.ComprobarPuerta(posicionSprite + mov_horizontal) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
-                        x--;
+                        posicionSprite.X++;
                         j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
-                        t.GestionPuertas(x, y);
+                        t.GestionPuertas(posicionSprite);
                     }
                 }
             }
-            Console.SetCursorPosition(x, y);
+            if (tecla.Key == ConsoleKey.LeftArrow && posicionSprite.X > Tablero.X1_TABLERO1)
+            {
+                if (t.ComprobarEspacio(posicionSprite - mov_horizontal))
+                {
+                    posicionSprite.X--;
+                    if (ComprobarOcupada(jugadores, j))
+                    {
+                        posicionSprite.X++;
+                        ocupada = true;
+                    }
+                }
+                else
+                {
+                    if (t.ComprobarPuerta(posicionSprite - mov_horizontal) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
+                    {
+                        posicionSprite.X--;
+                        j.ListaObjetos.Remove(new Objeto("Ganzúa", ""));
+                        t.GestionPuertas(posicionSprite);
+                    }
+                }
+            }
+            Console.SetCursorPosition(posicionSprite.X, posicionSprite.Y);
         }
 
         public void Dibujar()
         {
             AplicarColor();
-            Console.SetCursorPosition(x, y);
+            Console.SetCursorPosition(posicionSprite.X, posicionSprite.Y);
             Console.Write('■');
         }
         public void AplicarColor()

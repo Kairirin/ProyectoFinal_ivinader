@@ -15,6 +15,10 @@ namespace ProyectoFinal_ivinader
         private const int YN_TABLERO = 14;
 
         private string[] tablero;
+        public Tablero()
+        {
+            tablero = CargaFichero.Cargar("tableroJuego.txt");
+        }
 
         public static int X1_TABLERO1 => X1_TABLERO;
 
@@ -24,10 +28,7 @@ namespace ProyectoFinal_ivinader
 
         public static int YN_TABLERO1 => YN_TABLERO;
 
-        public Tablero()
-        {
-            tablero = CargaFichero.Cargar("tableroJuego.txt");
-        }
+
         public void MostrarTablero()
         {
             Console.ResetColor();
@@ -65,18 +66,30 @@ namespace ProyectoFinal_ivinader
                 }
             }
         }
-        public void GestionPuertas(int x, int y)
+        public void GestionPuertas(Posicion pos)
         {
             string aux1, aux2, resultado;
 
-            aux1 = tablero[y].Substring(0, x);
-            aux2 = tablero[y].Substring(x + 1);
+            aux1 = tablero[pos.Y].Substring(0, pos.X);
+            aux2 = tablero[pos.Y].Substring(pos.X + 1);
             resultado = aux1 + 'p' + aux2;
-            tablero[y] = resultado;
+            tablero[pos.Y] = resultado;
         }
-        public string ComprobarEspacio(int x, int y)
+        public bool ComprobarPuerta(Posicion pos)
         {
-            return tablero[y][x].ToString();
+            return tablero[pos.Y][pos.X] == 'P';
+        }
+        public bool ComprobarEspacio(Posicion pos)
+        {
+            return tablero[pos.Y][pos.X] != '1' && tablero[pos.Y][pos.X] != 'P';
+        }
+        public bool EstaEnHabitacion(Posicion pos)
+        {
+            return tablero[pos.Y][pos.X] != '1' && tablero[pos.Y][pos.X] != 'P' && tablero[pos.Y][pos.X] != 'p' && tablero[pos.Y][pos.X] != ' ' && tablero[pos.Y][pos.X] != 'R';
+        }
+        public string DevolverLetra(Posicion pos)
+        {
+            return tablero[pos.Y][pos.X].ToString();
         }
     }
 }
