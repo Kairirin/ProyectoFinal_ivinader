@@ -1,37 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class Juego
     {
+        private const int INICIO_LINEA_ESCRITURA = 8;
         protected List<Jugador> jugadores;
         protected Tablero tablero;
-        protected DadoEvento dadoE; 
+        protected DadoEvento dadoE;
         protected DadoMovimiento dadoM;
         protected Solucion solucionCaso;
         protected List<Pista> pistas;
-        //private List<IEsEvento> eventos; -> Se han movido a la clase DadoEventos
         protected Random r;
 
         public Juego()
         {
             tablero = new Tablero();
             r = new Random();
-            //CargarHabitacionesEnFichero();
-            pistas = CargarPistas();
-            pistas.AddRange(CargarHabitaciones());
-            //eventos = CargarEventos();
+            pistas = CargaFichero.CargarPistas("pistas.xml");
+            pistas.AddRange(CargaFichero.CargarHabitaciones());
             solucionCaso = CargarSolucion();
+            Console.WriteLine(solucionCaso.ToString());
+            Console.ReadLine();
             dadoE = new DadoEvento();
         }
         public Juego(Jugador j1): this()
@@ -43,17 +31,6 @@ namespace ProyectoFinal_ivinader
         {
             this.jugadores = jugadores;
             dadoM = new DadoMovimiento();
-        }
-        private List<Pista> CargarPistas()
-        {
-            List<Pista> pistas = new List<Pista>();
-            XmlSerializer formatter = new XmlSerializer(pistas.GetType());
-            FileStream stream = new FileStream("pistas.xml", FileMode.Open, FileAccess.Read, FileShare.Read);
-            pistas = (List<Pista>)formatter.Deserialize(stream);
-
-            stream.Close();
-
-            return pistas;
         }
         private Solucion CargarSolucion()
         {
@@ -71,22 +48,6 @@ namespace ProyectoFinal_ivinader
 
             return new Solucion(culpable, arma, escenaCrimen);
         }
-        public List<Jugador> GetJugadores() //Borrar y hacer propiedades
-        {
-            return jugadores;
-        }
-        public Solucion GetSolucion()
-        {
-            return solucionCaso;
-        }
-        public List<Pista> GetPistas()
-        {
-            return pistas;
-        }
-        /*public List<IEsEvento> GetEventos()
-        {
-            return eventos;
-        }*/
         public void LanzarJuego()
         {
             bool resuelto = false;
@@ -121,13 +82,13 @@ namespace ProyectoFinal_ivinader
         }
         public virtual bool JugarTurno(Jugador j)
         {
-            int contadorPasos = 0;
+            int contadorPasos = 0, pasos = 0;
             bool resuelto = false;
 
             while(!resuelto)
             {
                 Console.Clear();
-                bool colision = false;
+                bool ocupada = false;
                 tablero.MostrarTablero();
 
                 j.MostrarDatos();
@@ -135,10 +96,10 @@ namespace ProyectoFinal_ivinader
                 j.MostrarPistas(54, 11);
 
                 if (contadorPasos % 8 == 0)
-                    dadoE.ObtenerEvento(j, tablero);
+                    dadoE.ObtenerEvento(j, ref pasos, tablero);
 
                 j.Icono.Dibujar();
-                j.Icono.Mover(tablero, jugadores, j, ref colision);
+                j.Icono.Mover(tablero, jugadores, j, ref ocupada);
                 contadorPasos++;
                 
                 if(tablero.EstaEnHabitacion(j.Icono.PosicionSprite))
@@ -157,15 +118,16 @@ namespace ProyectoFinal_ivinader
                         if (Resolver())
                         {
                             DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
                             Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                            resuelto = true;
                         }
                         else
                         {
                             DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
                             Console.WriteLine("Sigue intentándolo");
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + 1);
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA + 1);
                             Console.WriteLine(" Pulsa cualquier tecla para continuar");
                             Console.ReadLine();
                         }
@@ -205,22 +167,9 @@ namespace ProyectoFinal_ivinader
                 }
             }
         }
-        //Método PonerTrampa por implementar
-        /*public void BloquearPuertas(string letra, Tablero tablero) -> movido a Dado Eventos
-        {
-            eventos.ForEach(h =>
-            {
-                if(h is Habitacion && ((Habitacion)h).LetraAsociada == letra)
-                {
-                    ((Habitacion)h).Puertas.ForEach(p => p.BloquearDesbloquear(letra));
-                    tablero.GestionPuertas(letra);
-                }
-            });
-        }*/
         protected bool Resolver()
         {
-            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
-            List<Pista> pistas = CargarPistas();
+            List<Pista> pistas = CargaFichero.CargarPistas("pistas.xml");
             Sospechoso propuestaCulpable = (Sospechoso)SeleccionarSolucion(pistas, "sospechoso");
             Arma propuestaArma = (Arma)SeleccionarSolucion(pistas, "arma");
             Habitacion propuestaEstancia = (Habitacion)SeleccionarSolucion(pistas, "habitacion");
@@ -234,6 +183,19 @@ namespace ProyectoFinal_ivinader
             bool salir = false;
             int indice = 0;
 
+            switch (tipo)
+            {
+                case "sospechoso":
+                    aux = pistas.Where(s => s is Sospechoso).ToList();
+                    break;
+                case "arma":
+                    aux = pistas.Where(a => a is Arma).ToList();
+                    break;
+                case "habitacion":
+                    aux.AddRange(CargaFichero.CargarHabitaciones());
+                    break;
+            }
+
             Console.SetCursorPosition(0, indice);
             Console.CursorVisible = false;
 
@@ -241,21 +203,8 @@ namespace ProyectoFinal_ivinader
             {
                 Console.ResetColor();
                 DibujarCuadro();
-                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
+                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
                 Console.WriteLine($"Elige {tipo}: ");
-
-                switch(tipo)
-                {
-                    case "sospechoso":
-                        aux = pistas.Where(s => s is Sospechoso).ToList();
-                        break;
-                    case "arma":
-                        aux = pistas.Where(a => a is Arma).ToList();
-                        break;
-                    case "habitacion":
-                        aux = CargarHabitaciones();
-                        break;
-                }
 
                 Mostrar(aux, indice);
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
@@ -264,7 +213,7 @@ namespace ProyectoFinal_ivinader
                 {
                     if (tecla.Key == ConsoleKey.UpArrow && indice > 0)
                         indice--;
-                    if (tecla.Key == ConsoleKey.DownArrow && indice < 6)
+                    if (tecla.Key == ConsoleKey.DownArrow && indice < aux.Count - 1)
                         indice++;
                     if (tecla.Key == ConsoleKey.Enter)
                     {
@@ -282,7 +231,7 @@ namespace ProyectoFinal_ivinader
 
             for (int i = 0; i < cuadro.Length; i++)
             {
-                Console.SetCursorPosition(Console.WindowWidth / 4, 7 + i);
+                Console.SetCursorPosition(Console.WindowWidth / 4, INICIO_LINEA_ESCRITURA - 1 + i);
                 Console.WriteLine(cuadro[i]);
 
             }
@@ -296,22 +245,16 @@ namespace ProyectoFinal_ivinader
                 else
                     Console.ResetColor();
 
-                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + i + 1);
+                Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA + i + 1);
                 Console.WriteLine(lista[i]);
             }
         }
-        private List<Pista> CargarHabitaciones()
-        {
-            List<Pista> habs = new List<Pista>();
-            habs.Add(new Habitacion("Cocina", "K"));
-            habs.Add(new Habitacion("Comedor", "C"));
-            habs.Add(new Habitacion("Sala de estar", "S"));
-            habs.Add(new Habitacion("Habitación de invitados", "I"));
-            habs.Add(new Habitacion("Habitación principal", "H"));
-            habs.Add(new Habitacion("Baño", "B"));
-            habs.Add(new Habitacion("Estudio", "E"));
-
-            return habs;
-        }
+        public List<Jugador> Jugadores { get => jugadores; set => jugadores = value; }
+        public Tablero Tablero { get => tablero; set => tablero = value; }
+        public DadoEvento DadoE { get => dadoE; set => dadoE = value; }
+        public DadoMovimiento DadoM { get => dadoM; set => dadoM = value; }
+        public Solucion SolucionCaso { get => solucionCaso; set => solucionCaso = value; }
+        public List<Pista> Pistas { get => pistas; set => pistas = value; }
+        public Random R { get => r; set => r = value; }
     }
 }

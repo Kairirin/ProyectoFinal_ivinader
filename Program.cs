@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿//Irene Vinader Antón - Proyecto final de programación - 1º DAW
+using System.Runtime.CompilerServices;
 
 namespace ProyectoFinal_ivinader
 {

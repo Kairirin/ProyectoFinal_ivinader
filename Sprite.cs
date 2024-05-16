@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class Sprite: IEsMovible
     {
@@ -35,7 +29,7 @@ namespace ProyectoFinal_ivinader
 
             return ocupada;
         }
-        public void Mover(Tablero t, List<Jugador> jugadores, Jugador j, ref bool ocupada) //MIRAR BIEN ESTE MÉTODO. MUY LARGO
+        public void Mover(Tablero t, List<Jugador> jugadores, Jugador j, ref bool ocupada)
         {
             Console.CursorVisible = false;
 
@@ -54,6 +48,7 @@ namespace ProyectoFinal_ivinader
                 }
                 else
                 {
+                    ocupada = true;
                     if (t.ComprobarPuerta(posicionSprite - mov_vertical) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
                         posicionSprite.Y--;
@@ -75,6 +70,7 @@ namespace ProyectoFinal_ivinader
                 }
                 else
                 {
+                    ocupada = true;
                     if (t.ComprobarPuerta(posicionSprite + mov_vertical) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
                         posicionSprite.Y++;
@@ -96,6 +92,7 @@ namespace ProyectoFinal_ivinader
                 }
                 else
                 {
+                    ocupada = true;
                     if (t.ComprobarPuerta(posicionSprite + mov_horizontal) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
                         posicionSprite.X++;
@@ -117,6 +114,7 @@ namespace ProyectoFinal_ivinader
                 }
                 else
                 {
+                    ocupada = true;
                     if (t.ComprobarPuerta(posicionSprite - mov_horizontal) && j.ListaObjetos.Contains(new Objeto("Ganzúa", "")))
                     {
                         posicionSprite.X--;
@@ -127,7 +125,6 @@ namespace ProyectoFinal_ivinader
             }
             Console.SetCursorPosition(posicionSprite.X, posicionSprite.Y);
         }
-
         public void Dibujar()
         {
             AplicarColor();
@@ -154,7 +151,6 @@ namespace ProyectoFinal_ivinader
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
             }
-        }
-        
+        }   
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     public class Tablero
     {
@@ -38,7 +31,7 @@ namespace ProyectoFinal_ivinader
                 Console.WriteLine(tablero[i]);
             }
         }
-        public void GestionPuertas(string letra) //Volver con todo el tema de la posiciones
+        public void GestionPuertas(string letra)
         {
             string aux1, aux2, resultado;
 

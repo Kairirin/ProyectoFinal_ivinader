@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     [Serializable]
     public class Habitacion: Pista, IEsEvento
@@ -19,6 +13,14 @@ namespace ProyectoFinal_ivinader
             puertas.Add(new Puerta(this, true));
         }
         public List<Puerta> Puertas { get => puertas; set => puertas = value; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Habitacion habitacion &&
+                   base.Equals(obj) &&
+                   nombre == habitacion.nombre;
+        }
+
         public override string ToString()
         {
             return "Habitación: " + base.ToString();

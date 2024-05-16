@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class Jugador
     {
+        private const int INICIO_NOMBRE_X = 65;
+        private const int INICIO_NOMBRE_Y = 1;
         private string nombre;
         private Sprite icono;
         private int turno;
@@ -35,7 +31,6 @@ namespace ProyectoFinal_ivinader
         {
             listaObjetos.Add(obj);  
         }
-
         public string Nombre { get => nombre; set => nombre = value; }
         public int Turno { get => turno; set => turno = value; }
         public bool Activo { get => activo; set => activo = value; }
@@ -67,7 +62,7 @@ namespace ProyectoFinal_ivinader
             {
                 for(int i = 0; i <listaObjetos.Count; i++)
                 {
-                    Console.SetCursorPosition(x, y +i);
+                    Console.SetCursorPosition(x, y + i);
                     Console.WriteLine(listaObjetos[i]);
                 }
             }
@@ -80,20 +75,20 @@ namespace ProyectoFinal_ivinader
 
         public override string ToString()
         {
-            return nombre; //Ampliar
+            return nombre;
         }
         public void MostrarDatos()
         {
             Console.ResetColor();
-            Console.SetCursorPosition(65, 1);
+            Console.SetCursorPosition(INICIO_NOMBRE_X, INICIO_NOMBRE_Y);
             Console.WriteLine(this);
         }
         public void MostrarDatos(int pasos)
         {
             Console.ResetColor();
-            Console.SetCursorPosition(65, 1);
+            Console.SetCursorPosition(INICIO_NOMBRE_X, INICIO_NOMBRE_Y);
             Console.WriteLine(this);
-            Console.SetCursorPosition(50, 2);
+            Console.SetCursorPosition(INICIO_NOMBRE_X - 15, INICIO_NOMBRE_Y + 1);
             Console.WriteLine($"Pasos restantes: {pasos}");
         }
         public override bool Equals(object? obj)

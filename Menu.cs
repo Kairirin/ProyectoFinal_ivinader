@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class Menu
     {
+        private const int Y1 = 15;
+        private const int Y2 = 22;
+        private const int X1 = 14;
+        private const int X2 = 61;
         private const int LINEA_PERSONAJES_X = 64;
         private const int LINEA_PERSONAJES_Y = 13;
         private string[] menu;
@@ -32,10 +29,10 @@ namespace ProyectoFinal_ivinader
         public void MostrarMenu()
         {
             bool terminar = false;
-            Posicion unJugador = new Posicion(14, 15); //Le he restado 1 a todo, tenerlo en cuenta
-            Posicion multijugador = new Posicion(61,15);
-            Posicion instrucciones = new Posicion(14,22);
-            Posicion salir = new Posicion(61,22);
+            Posicion unJugador = new Posicion(X1, Y1);
+            Posicion multijugador = new Posicion(X2,Y1);
+            Posicion instrucciones = new Posicion(X1,Y2);
+            Posicion salir = new Posicion(X2,Y2);
             menu = CargaFichero.Cargar("menuPrincipal.txt");
             int actual = 1;
 
@@ -111,6 +108,9 @@ namespace ProyectoFinal_ivinader
                                 break;
                             case 3:
                                 MostrarInstrucciones();
+                                Console.ReadLine();
+                                if(tecla.Key == ConsoleKey.Enter )
+                                    MostrarMenu();
                                 break;
                             case 4:
                                 terminar = true;
@@ -203,7 +203,7 @@ namespace ProyectoFinal_ivinader
             Jugador j1 = SeleccionPersonaje(1);
 
             Juego cluedo = new Juego(j1);
-            cluedo.LanzarJuego(); //Método que sustituye a jugar turno en el modo de un jugador
+            cluedo.LanzarJuego();
         }
         private int IntroducirNumJugadores()
         {
@@ -230,12 +230,12 @@ namespace ProyectoFinal_ivinader
                     if (tecla.Key == ConsoleKey.LeftArrow && numJugadores > 2)
                     {
                         numJugadores--;
-                        cursor.X-=7;
+                        cursor.X -= 7;
                     }
                     if (tecla.Key == ConsoleKey.RightArrow && numJugadores < 4)
                     {
                         numJugadores++;
-                        cursor.X+=7;
+                        cursor.X += 7;
                     }
                     if (tecla.Key == ConsoleKey.Enter)
                     {
@@ -286,8 +286,13 @@ namespace ProyectoFinal_ivinader
         }
         public static void MostrarInstrucciones()
         {
-            Console.Clear();
-            //Cargar imagen con instrucciones???
+            string[] instrucciones = CargaFichero.Cargar("instrucciones.txt");
+
+            for(int i = 0; i < instrucciones.Length; i++)
+            {
+                Console.SetCursorPosition(20, 4 + i);
+                Console.WriteLine(instrucciones[i]);
+            }
         }
     }
 }

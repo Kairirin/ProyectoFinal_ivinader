@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class DadoEvento: Dado
     {
+        private const int INICIO_LINEA_ESCRITURA = 8;
         private List<IEsEvento> eventos;
         public DadoEvento()
-        { 
-            //eventos = new List<IEsEvento>();
-            eventos = CargarEventos();
+        {
+            eventos = new List<IEsEvento> ();   
+            eventos.AddRange(CargaFichero.CargarObjetos("eventos.xml"));
+            eventos.AddRange(CargaFichero.CargarTrampas("trampas.xml"));
+            eventos.AddRange(CargaFichero.CargarHabitaciones());
         }
         public DadoEvento(List<IEsEvento> eventos)
         {
@@ -23,7 +19,7 @@ namespace ProyectoFinal_ivinader
         {
             return (short)r.Next(1, eventos.Count);
         }
-        public void ObtenerEvento(Jugador j, Tablero tablero)
+        public void ObtenerEvento(Jugador j, ref int pasos, Tablero tablero)
         {
             IEsEvento eventoElegido = eventos[Lanzar()];
 
@@ -38,15 +34,16 @@ namespace ProyectoFinal_ivinader
                     string letra = ((Habitacion)eventoElegido).LetraAsociada;
                     BloquearPuertas(letra, tablero);
                     break;
+                case "Trampa":
+                    PonerTrampa(j, ref pasos, tablero);
+                    break;
             }
-
-            //return eventos[Lanzar()];
         }
         public void DarObjeto(Jugador j)
         {
             List<IEsEvento> objetos = eventos.FindAll(o => o is Objeto);
 
-            j.ListaObjetos.Add((Objeto)objetos[r.Next(1, objetos.Count)]);
+            j.ListaObjetos.Add((Objeto)objetos[r.Next(0, objetos.Count)]);
         }
         public void BloquearPuertas(string letra, Tablero tablero)
         {
@@ -59,29 +56,62 @@ namespace ProyectoFinal_ivinader
                 }
             });
         }
-        private List<IEsEvento> CargarEventos()
+        public void PonerTrampa(Jugador j, ref int pasos, Tablero tab)
         {
-            List<Objeto> objetos = CargaFichero.DeserializarXML("eventos.xml");
-            eventos = new List<IEsEvento>();
-            eventos.AddRange(objetos);
+            List<IEsEvento> trampas = eventos.FindAll(t => t is Trampa);
+            Trampa trampa = (Trampa)trampas[r.Next(0, trampas.Count - 1)];
 
-            /*string fichero = "habitaciones.json";
-            string jsonString = File.ReadAllText(fichero);
-            List<Habitacion> habs = JsonSerializer.Deserialize<List<Habitacion>>(jsonString);*/
+            DibujarCuadro();
 
-            List<Habitacion> habs = new List<Habitacion>(); //Anotar en informe que no funciona la deserialización json
-            habs.Add(new Habitacion("Cocina", "K"));
-            habs.Add(new Habitacion("Comedor", "C"));
-            habs.Add(new Habitacion("Sala de estar", "S"));
-            habs.Add(new Habitacion("Habitación de invitados", "I"));
-            habs.Add(new Habitacion("Habitación principal", "H"));
-            habs.Add(new Habitacion("Baño", "B"));
-            habs.Add(new Habitacion("Estudio", "E"));
+            switch (trampa.Nombre)
+            {
+                case "Familiar lejano":
+                    Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
+                    Console.WriteLine($"{trampa}");
+                    Console.ReadLine();
+                    if (j.ListaObjetos.Contains(new Objeto("Aspirina", "")))
+                    {
+                        j.ListaObjetos.Remove(new Objeto("Aspirina", ""));
+                    }
+                    else
+                    {
+                        Posicion actual = j.Icono.PosicionSprite;
+                        while(actual == j.Icono.PosicionSprite)
+                        {
+                            Posicion posAleatoria = new Posicion(0, r.Next(0, 4));
+                            if (tab.ComprobarEspacio(j.Icono.PosicionSprite - posAleatoria))
+                            {
+                                j.Icono.PosicionSprite -= posAleatoria;
+                            }
+                        }
+                        pasos = 0;
+                    }
+                    break;
+                case "Madre desconsolada":
+                    Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
+                    Console.WriteLine($"{trampa}");
+                    Console.ReadLine();
+                    if (j.ListaObjetos.Contains(new Objeto("Fotografía", "")))
+                    {
+                        j.ListaObjetos.Remove(new Objeto("Fotografía", ""));
+                    }
+                    else
+                    {
+                        pasos = 0;
+                    }
+                    break;
+            }
+        }
+        private void DibujarCuadro()
+        {
+            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
 
-            eventos.AddRange(habs);
-            //pistas.AddRange(habs);
+            for (int i = 0; i < cuadro.Length; i++)
+            {
+                Console.SetCursorPosition(Console.WindowWidth / 4, (INICIO_LINEA_ESCRITURA - 1) + i);
+                Console.WriteLine(cuadro[i]);
 
-            return eventos;
+            }
         }
     }
 }

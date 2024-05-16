@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     [Serializable]
     public class Sospechoso: Pista
@@ -12,6 +6,12 @@ namespace ProyectoFinal_ivinader
         public Sospechoso() { }
         public Sospechoso(string nombre, string letra) : base(nombre, letra) { }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Sospechoso sospechoso &&
+                   base.Equals(obj) &&
+                   nombre == sospechoso.nombre;
+        }
         public override string ToString()
         {
             return "Sospechoso: " + base.ToString();

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
-namespace ProyectoFinal_ivinader
+﻿namespace ProyectoFinal_ivinader
 {
     internal class Multijugador: Juego
     {
@@ -15,12 +8,12 @@ namespace ProyectoFinal_ivinader
         }
         public override bool JugarTurno(Jugador j)
         {
-            //Implementar juego por turnos en multi
             int pasos;
             bool resuelto = false;
 
             pasos = dadoM.Lanzar();
-            dadoE.ObtenerEvento(j, tablero);
+            dadoE.ObtenerEvento(j, ref pasos, tablero);
+            
 
             while (pasos > 0)
             {
@@ -50,6 +43,7 @@ namespace ProyectoFinal_ivinader
                         DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
+                    j.MostrarPistas(54, 11);
                     pasos = 0;
                 }
                 else
@@ -61,6 +55,7 @@ namespace ProyectoFinal_ivinader
                             DibujarCuadro();
                             Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
                             Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                            resuelto = true;
                         }
                         else
                         {
