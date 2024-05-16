@@ -18,8 +18,6 @@
             pistas = CargaFichero.CargarPistas("pistas.xml");
             pistas.AddRange(CargaFichero.CargarHabitaciones());
             solucionCaso = CargarSolucion();
-            Console.WriteLine(solucionCaso.ToString());
-            Console.ReadLine();
             dadoE = new DadoEvento();
         }
         public Juego(Jugador j1): this()
@@ -120,6 +118,9 @@
                             DibujarCuadro();
                             Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
                             Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA + 1);
+                            Console.WriteLine("Pulsa Intro para volver al menú principal");
+                            Console.ReadLine();
                             resuelto = true;
                         }
                         else
@@ -174,7 +175,7 @@
             Arma propuestaArma = (Arma)SeleccionarSolucion(pistas, "arma");
             Habitacion propuestaEstancia = (Habitacion)SeleccionarSolucion(pistas, "habitacion");
 
-            return solucionCaso == new Solucion(propuestaCulpable, propuestaArma, propuestaEstancia);
+            return solucionCaso.Culpable.Nombre == propuestaCulpable.Nombre && solucionCaso.Arma.Nombre == propuestaArma.Nombre && solucionCaso.Habitacion.Nombre == propuestaEstancia.Nombre; //En un principio implementé equals, pero no funciona.
         }
         private Pista SeleccionarSolucion(List<Pista> pistas, string tipo)
         {
