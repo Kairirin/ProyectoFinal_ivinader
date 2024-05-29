@@ -12,6 +12,9 @@
             bool resuelto = false;
 
             pasos = dadoM.Lanzar();
+            Console.Clear();
+            tablero.MostrarTablero();
+            j.MostrarDatos(pasos);
             dadoE.ObtenerEvento(j, ref pasos, tablero);
             
 
@@ -55,6 +58,7 @@
                             DibujarCuadro();
                             Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
                             Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                            Console.ReadLine();
                             resuelto = true;
                         }
                         else

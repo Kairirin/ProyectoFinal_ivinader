@@ -31,15 +31,16 @@
                 Console.WriteLine(tablero[i]);
             }
         }
-        public void GestionPuertas(string letra)
+        public void GestionPuertas(string letraString)
         {
             string aux1, aux2, resultado;
+            char letra = Convert.ToChar(letraString);
 
             for (int i = Y1_TABLERO; i < YN_TABLERO; i++)
             {
                 for(int j = X1_TABLERO; j < XN_TABLERO; j++)
                 {
-                    if (tablero[i][j] == 'P' && (tablero[i - 1][j] == Convert.ToChar(letra) || tablero[i + 1][j] == Convert.ToChar(letra) || tablero[i][j+1] == Convert.ToChar(letra) || tablero[i][j-1] == Convert.ToChar(letra)))
+                    if (tablero[i][j] == 'P' && (tablero[i - 1][j] == letra || tablero[i + 1][j] == letra || tablero[i][j+1] == letra || tablero[i][j-1] == letra))
                     {
                         aux1 = tablero[i].Substring(0, j);
                         aux2 = tablero[i].Substring(j + 1);
@@ -48,7 +49,7 @@
                     }
                     else
                     {
-                        if (tablero[i][j] == 'p' && (tablero[i - 1][j] == Convert.ToChar(letra) || tablero[i + 1][j] == Convert.ToChar(letra) || tablero[i][j + 1] == Convert.ToChar(letra) || tablero[i][j - 1] == Convert.ToChar(letra)))
+                        if (tablero[i][j] == 'p' && (tablero[i - 1][j] == letra || tablero[i + 1][j] == letra || tablero[i][j + 1] == letra || tablero[i][j - 1] == letra))
                         {
                             aux1 = tablero[i].Substring(0, j);
                             aux2 = tablero[i].Substring(j + 1);

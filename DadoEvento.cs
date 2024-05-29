@@ -61,13 +61,10 @@
             List<IEsEvento> trampas = eventos.FindAll(t => t is Trampa);
             Trampa trampa = (Trampa)trampas[r.Next(0, trampas.Count - 1)];
 
-            DibujarCuadro();
-
             switch (trampa.Nombre)
             {
                 case "Familiar lejano":
-                    Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
-                    Console.WriteLine($"{trampa}");
+                    DibujarCuadro("familiar.txt");
                     Console.ReadLine();
                     if (j.ListaObjetos.Contains(new Objeto("Aspirina", "")))
                     {
@@ -88,8 +85,7 @@
                     }
                     break;
                 case "Madre desconsolada":
-                    Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
-                    Console.WriteLine($"{trampa}");
+                    DibujarCuadro("madre.txt");
                     Console.ReadLine();
                     if (j.ListaObjetos.Contains(new Objeto("Fotografía", "")))
                     {
@@ -102,9 +98,10 @@
                     break;
             }
         }
-        private void DibujarCuadro()
+        private void DibujarCuadro(string ruta)
         {
-            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
+            string[] cuadro = CargaFichero.Cargar(ruta);
+            Console.ResetColor();
 
             for (int i = 0; i < cuadro.Length; i++)
             {
