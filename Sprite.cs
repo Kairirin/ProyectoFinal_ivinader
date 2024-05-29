@@ -2,17 +2,23 @@
 {
     internal class Sprite: IEsMovible
     {
+        private const int X_INICIAL = 26;
+        private const int Y_INICIAL = 10;
         private static Posicion mov_vertical = new Posicion(0, 1);
         private static Posicion mov_horizontal = new Posicion(1, 0);
         private Posicion posicionSprite;
         private string color;
         public Sprite(string color)
         {
-            posicionSprite = new Posicion(26, 10);
+            posicionSprite = new Posicion(X_INICIAL, Y_INICIAL);
             this.color = color;
         }
         public string Color { get => color; set => color = value; }
         public Posicion PosicionSprite { get => posicionSprite; set => posicionSprite = value; }
+        public void PosicionarEnSalida()
+        {
+            posicionSprite = new Posicion(X_INICIAL, Y_INICIAL);
+        }
 
         private bool ComprobarOcupada(List<Jugador> jugadores, Jugador j)
         {

@@ -16,7 +16,6 @@
             tablero = new Tablero();
             r = new Random();
             pistas = CargaFichero.CargarPistas("pistas.xml");
-            pistas.AddRange(CargaFichero.CargarHabitaciones());
             solucionCaso = CargarSolucion();
             dadoE = new DadoEvento();
         }
@@ -34,15 +33,14 @@
         {
             List<Pista> listaSospechososAuxiliar = pistas.FindAll(s => s is Sospechoso);
             List<Pista> listaArmasAuxiliar = pistas.FindAll(s => s is Arma);
-            List<Pista> listaHabsAuxiliar = pistas.FindAll(s => s is Habitacion);
+            List<Habitacion> listaHabsAuxiliar = CargaFichero.CargarHabitaciones();
 
             Sospechoso culpable = (Sospechoso)listaSospechososAuxiliar[r.Next(0, listaSospechososAuxiliar.Count() - 1)];
             Arma arma = (Arma)listaArmasAuxiliar[r.Next(0, listaArmasAuxiliar.Count() - 1)];
-            Habitacion escenaCrimen = (Habitacion)listaHabsAuxiliar[r.Next(0, listaHabsAuxiliar.Count() - 1)];
+            Habitacion escenaCrimen = listaHabsAuxiliar[r.Next(0, listaHabsAuxiliar.Count() - 1)];
 
             pistas.Remove(culpable);
             pistas.Remove(arma);
-            pistas.Remove(escenaCrimen);
 
             return new Solucion(culpable, arma, escenaCrimen);
         }
@@ -108,6 +106,7 @@
                         DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
+                    j.Icono.PosicionarEnSalida();
                 }
                 else
                 {
@@ -115,21 +114,13 @@
                     {
                         if (Resolver())
                         {
-                            DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
-                            Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA + 1);
-                            Console.WriteLine("Pulsa Intro para volver al menú principal");
+                            DibujarCuadro("ganador.txt");
                             Console.ReadLine();
                             resuelto = true;
                         }
                         else
                         {
-                            DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
-                            Console.WriteLine("Sigue intentándolo");
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA + 1);
-                            Console.WriteLine(" Pulsa cualquier tecla para continuar");
+                            DibujarCuadro("perder.txt");
                             Console.ReadLine();
                         }
                     }
@@ -173,9 +164,39 @@
             List<Pista> pistas = CargaFichero.CargarPistas("pistas.xml");
             Sospechoso propuestaCulpable = (Sospechoso)SeleccionarSolucion(pistas, "sospechoso");
             Arma propuestaArma = (Arma)SeleccionarSolucion(pistas, "arma");
+            MostrarAcertijo(solucionCaso.Habitacion);
             Habitacion propuestaEstancia = (Habitacion)SeleccionarSolucion(pistas, "habitacion");
 
             return solucionCaso.Culpable.Nombre == propuestaCulpable.Nombre && solucionCaso.Arma.Nombre == propuestaArma.Nombre && solucionCaso.Habitacion.Nombre == propuestaEstancia.Nombre; //En un principio implementé equals, pero no funciona.
+        }
+        private void MostrarAcertijo(Habitacion hab)
+        {
+            switch (hab.LetraAsociada)
+            {
+                case "K":
+                    DibujarCuadro("k.txt");
+                    break;
+                case "C":
+                    DibujarCuadro("c.txt");
+                    break;
+                case "S":
+                    DibujarCuadro("s.txt");
+                    break;
+                case "I":
+                    DibujarCuadro("i.txt");
+                    break;
+                case "H":
+                    DibujarCuadro("h.txt");
+                    break;
+                case "B":
+                    DibujarCuadro("b.txt");
+                    break;
+                case "E":
+                    DibujarCuadro("e.txt");
+                    break;
+            }
+
+            Console.ReadLine();
         }
         private Pista SeleccionarSolucion(List<Pista> pistas, string tipo)
         {
@@ -203,7 +224,7 @@
             while (!salir)
             {
                 Console.ResetColor();
-                DibujarCuadro();
+                DibujarCuadro("cuadro.txt");
                 Console.SetCursorPosition(Console.WindowWidth / 4 + 1, INICIO_LINEA_ESCRITURA);
                 Console.WriteLine($"Elige {tipo}: ");
 
@@ -226,9 +247,9 @@
 
             return pista;
         }
-        protected void DibujarCuadro()
+        protected void DibujarCuadro(string ruta)
         {
-            string[] cuadro = CargaFichero.Cargar("cuadro.txt");
+            string[] cuadro = CargaFichero.Cargar(ruta);
 
             for (int i = 0; i < cuadro.Length; i++)
             {

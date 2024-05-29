@@ -46,6 +46,7 @@
                         DarPista(j, tablero.DevolverLetra(j.Icono.PosicionSprite));
                         j.ListaObjetos.Remove(new Objeto("Trofeo", ""));
                     }
+                    j.Icono.PosicionarEnSalida();
                     j.MostrarPistas(54, 11);
                     pasos = 0;
                 }
@@ -55,19 +56,13 @@
                     {
                         if (Resolver())
                         {
-                            DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
-                            Console.WriteLine("Enhorabuena! Has resuelto el asesinato");
+                            DibujarCuadro("ganador.txt");
                             Console.ReadLine();
                             resuelto = true;
                         }
                         else
                         {
-                            DibujarCuadro();
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8);
-                            Console.WriteLine("Sigue intentándolo");
-                            Console.SetCursorPosition(Console.WindowWidth / 4 + 1, 8 + 1);
-                            Console.WriteLine(" Pulsa cualquier tecla para continuar");
+                            DibujarCuadro("perder.txt");
                             Console.ReadLine();
                         }
                     }
